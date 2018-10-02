@@ -1,4 +1,6 @@
-let config = require("config");
+"use strict";
+
+const configManager = require('./src/lib/StaticConfigurationManager');
 
 let remoteConfig = {
   "user": {
@@ -6,4 +8,5 @@ let remoteConfig = {
   }
 };
 
-console.log(config);
+configManager.get('user')
+  .then(function(value) {console.log(value)});
