@@ -1,12 +1,17 @@
 "use strict";
 
-const configManager = require('./src/lib/StaticConfigurationManager');
+const StaticConfigurationManager = require('./src/lib/StaticConfigurationManager');
+const RemoteConfigurationManager = require('./src/lib/RemoteConfigurationManager');
+const NodeSelector = require('./src/lib/NodeSelector');
 
-let remoteConfig = {
-  "user": {
-    "type": "human"
-  }
-};
+const staticConfig = new StaticConfigurationManager();
+const remoteConfig = new RemoteConfigurationManager(staticConfig, NodeSelector, {});
 
-configManager.get('user')
-  .then(function(value) {console.log(value)});
+
+remoteConfig.get('user')
+  .then(function(value) {
+    console.log(value)
+  })
+  .catch(err => {
+    console.log(err);
+  });

@@ -23,12 +23,12 @@ class StaticConfigurationManager extends ConfigurationManagerInterface {
 
   buildTree() {
     try {
-        Promise.resolve(nodeConfig);
+      return Promise.resolve(nodeConfig);
     }
     catch (error) {
-      Promise.reject(error);
+      return Promise.reject(error);
     }
   }
 }
 
-module.exports = new StaticConfigurationManager();
+module.exports = StaticConfigurationManager;

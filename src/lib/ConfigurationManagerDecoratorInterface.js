@@ -15,11 +15,14 @@ const ConfigurationManagerInterface = require('./ConfigurationManagerInterface')
  */
 class ConfigurationManagerDecoratorInterface extends ConfigurationManagerInterface {
   constructor(component) {
-    if (!component) {
+    super();
+
+    if (!component || !component.prototype instanceof ConfigurationManagerInterface) {
       throw new Error('You must provide an object that implements to ConfigurationManagerInterface');
     }
     this.component = component;
   }
+
 }
 
 module.exports = ConfigurationManagerDecoratorInterface;
