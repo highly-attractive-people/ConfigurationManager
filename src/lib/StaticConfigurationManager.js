@@ -1,8 +1,15 @@
-"use strict";
+'use strict';
 
 const ConfigurationManagerInterface = require('./ConfigurationManagerInterface');
 const nodeConfig = require('config');
 
+/**
+ * Static Configuration Manager
+ *  This concrete class implements ConfigurationManagerInterface using the package
+ *  node-config to fetch static config from the disk.
+ *
+ * @extends ConfigurationManagerInterface
+ */
 class StaticConfigurationManager extends ConfigurationManagerInterface {
 
   get(property) {

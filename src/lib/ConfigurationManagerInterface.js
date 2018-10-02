@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Configuration Manager.
@@ -13,7 +13,7 @@ class ConfigurationManagerInterface {
    *  A string representation of the path to an object. The path nodes are
    *  delimited by periods (.)
    *
-   * @return {array|boolean|number|object|string}
+   * @return {Promise<array|boolean|number|object|string>}
    *  The value of a configuration.
    */
   get(property) {
@@ -24,7 +24,7 @@ class ConfigurationManagerInterface {
    * This will fetch the entire tree of configurations in which one can traverse
    * over for querying for values.
    *
-   * @return {object}
+   * @return {Promise<object>}
    *  More specifically, a hash of key/value pairs.
    */
   buildTree() {

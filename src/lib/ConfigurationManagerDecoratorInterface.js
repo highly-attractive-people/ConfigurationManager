@@ -1,3 +1,5 @@
+'use strict';
+
 const ConfigurationManagerInterface = require('./ConfigurationManagerInterface');
 
 /**
