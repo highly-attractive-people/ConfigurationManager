@@ -2,7 +2,9 @@
 
 const ConfigurationManagerDecoratorInterface = require('./ConfigurationManagerDecoratorInterface');
 const TreeSelector = require('./TreeSelector');
-const R = require('ramda');
+const { mergeDeepRight } = require('ramda');
+const request = require('request-promise-native');
+
 
 /**
  * Remote Configuration Manager
@@ -41,7 +43,7 @@ class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface 
       _buildTree()
     ])
       .then((values) => {
-        return R.mergeDeepRight(values[0], values[1]);
+        return mergeDeepRight(values[0], values[1]);
       })
       .catch((error) => {
         console.log('There was an issue with merging trees.', error);
@@ -49,14 +51,23 @@ class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface 
   }
 }
 
+/**
+ * Private function responsible for fetching the remote data.
+ * @return {Promise<Object>}
+ *   Native object representing configuration directly from the remote service.
+ */
 const _buildTree = function() {
-  return Promise.resolve({
-    "user": {
-      "color": "blue",
-      "name": "Bob"
-    },
-    "holiday": "Christmas"
-  });
+  return request({uri:defaultOptions.remoteConfigURI, json:true, timeout: defaultOptions.timeout})
+    .catch(error => {
+      console.error(error.message);
+
+      return {};
+    });
 }
+
+const defaultOptions = {
+  remoteConfigURI: 'http://localhost:3000/',
+  timeout: 2000
+};
 
 module.exports = RemoteConfigurationManager;
