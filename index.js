@@ -10,8 +10,8 @@ const remoteConfig = new RemoteConfigurationManager(staticConfig, NodeSelector, 
 
 remoteConfig.get('user')
   .then(function(value) {
-    console.log(value)
+    console.log('VALUE: ', value)
   })
   .catch(err => {
-    console.log(err);
+    console.log('ERROR TOP-LEVEL', err);
   });

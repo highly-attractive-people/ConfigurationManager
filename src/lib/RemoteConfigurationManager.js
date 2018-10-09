@@ -9,6 +9,9 @@ const R = require('ramda');
  * @extends ConfigurationManagerDecoratorInterface
  */
 class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface {
+  /**
+   * @inheritdoc
+   */
   constructor(component, nodeSelector, options) {
     super(component);
 
@@ -16,21 +19,22 @@ class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface 
       throw new Error('You must provide an object that implements to TreeSelector');
     }
 
-    // TODO how should I define options or set class-level defaults?
-    options = {
-      remoteConfigURL: '',
-      timeout: ''
-    };
-
     this.nodeSelector = nodeSelector;
   }
 
+  /**
+   * @inheritdoc
+   */
   get(property) {
-    return this.buildTree().then((tree) => {
-      return this.nodeSelector.query(tree, property)}
-    );
+    return this.buildTree()
+      .then((tree) => {
+        return this.nodeSelector.query(tree, property)}
+      );
   }
 
+  /**
+   * @inheritdoc
+   */
   buildTree() {
     return Promise.all([
       this.component.buildTree(),

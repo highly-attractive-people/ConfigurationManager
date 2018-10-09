@@ -14,6 +14,12 @@ const ConfigurationManagerInterface = require('./ConfigurationManagerInterface')
  * @extends ConfigurationManagerInterface
  */
 class ConfigurationManagerDecoratorInterface extends ConfigurationManagerInterface {
+  /**
+   * This interface has a component, as well as is a component, which enables
+   * the decorator pattern.
+   * @param {ConfigurationManagerInterface} component
+   *   A class that represents the child component.
+   */
   constructor(component) {
     super();
 
