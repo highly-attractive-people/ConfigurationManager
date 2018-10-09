@@ -14,7 +14,7 @@ class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface 
   /**
    * @inheritdoc
    */
-  constructor(component, nodeSelector, options) {
+  constructor(component, nodeSelector, options = {}) {
     super(component);
 
     if (!nodeSelector || !nodeSelector.prototype instanceof TreeSelector) {
@@ -22,6 +22,7 @@ class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface 
     }
 
     this.nodeSelector = nodeSelector;
+    this.options = mergeDeepRight(defaultOptions, options);
   }
 
   /**
@@ -40,7 +41,7 @@ class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface 
   buildTree() {
     return Promise.all([
       this.component.buildTree(),
-      _buildTree()
+      this._buildTree()
     ])
       .then((values) => {
         return mergeDeepRight(values[0], values[1]);
@@ -49,20 +50,20 @@ class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface 
         console.log('There was an issue with merging trees.', error);
       });
   }
-}
 
-/**
- * Private function responsible for fetching the remote data.
- * @return {Promise<Object>}
- *   Native object representing configuration directly from the remote service.
- */
-const _buildTree = function() {
-  return request({uri:defaultOptions.remoteConfigURI, json:true, timeout: defaultOptions.timeout})
-    .catch(error => {
-      console.error(error.message);
+  /**
+   * "Private" function responsible for fetching the remote data.
+   * @return {Promise<Object>}
+   *   Native object representing configuration directly from the remote service.
+   */
+   _buildTree() {
+    return request({uri:this.options.remoteConfigURI, json:true, timeout: this.options.timeout})
+      .catch(error => {
+        console.error(error.message);
 
-      return {};
-    });
+        return {};
+      });
+  }
 }
 
 const defaultOptions = {
