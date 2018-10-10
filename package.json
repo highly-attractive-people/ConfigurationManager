@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "config": "^2.0.1",
+    "ldclient-node": "^5.5.0",
     "ramda": "^0.25.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5"
