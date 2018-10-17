@@ -73,6 +73,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
     this.readCacheFromFile = this.readCacheFromFile.bind(this);
     this.extractCacheData = this.extractCacheData.bind(this);
     this.readAndSetCacheInMemory = this.readAndSetCacheInMemory.bind(this);
+    this.resetCacheOptions = this.resetCacheOptions.bind(this);
   }
 
   /**
@@ -125,8 +126,24 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
   getRebuiltCacheObject() {
     console.log('rebuilding cache object'.red);
     return this.component.buildTree()
+      .then(this.resetCacheOptions)
       .then(this.writeCache)
       .then(this.readAndSetCacheInMemory);
+  }
+
+  resetCacheOptions(tree) {
+    let configOptions = {};
+
+    try {
+      if (configOptions = this.nodeSelector.query(tree, this.options.cacheConfigPath)) {
+        this.options = mergeDeepRight(defaultOptions, configOptions);
+      }
+    }
+    catch (error) {
+      console.error(error);
+    }
+
+    return Promise.resolve(tree);
   }
 
   /**
