@@ -5,6 +5,10 @@ const TreeSelector = require('./TreeSelector');
 const { mergeDeepRight } = require('ramda');
 const request = require('request-promise-native');
 
+const defaultOptions = {
+  remoteConfigURI: 'http://localhost:3000/',
+  timeout: 2000
+};
 
 /**
  * Remote Configuration Manager
@@ -47,7 +51,7 @@ class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface 
         return mergeDeepRight(values[0], values[1]);
       })
       .catch((error) => {
-        console.log('There was an issue with merging trees.', error);
+        console.log('There was an issue with merging remote config.', error);
       });
   }
 
@@ -65,10 +69,5 @@ class RemoteConfigurationManager extends ConfigurationManagerDecoratorInterface 
       });
   }
 }
-
-const defaultOptions = {
-  remoteConfigURI: 'http://localhost:3000/',
-  timeout: 2000
-};
 
 module.exports = RemoteConfigurationManager;
