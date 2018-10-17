@@ -8,7 +8,10 @@ let requestHandler = function(request, response) {
         "name": "Steve"
       },
       "holiday": "Christmas",
-      "isOffline": false
+      "isOffline": false,
+      "cacheConfigurationManager": {
+        ttl: 116000
+      }
     }));
   }, 2000);
 }
