@@ -3,5 +3,6 @@
     "name": "Sally",
     "age": 37
   },
-  "isOffline": true
+  "isOffline": true,
+  "connectedToLaunchDarkly": false
 }

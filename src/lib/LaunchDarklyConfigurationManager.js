@@ -20,7 +20,7 @@ class LaunchDarklyConfigurationManager extends RemoteConfigurationManager {
   constructor(component, nodeSelector, options = {}) {
     super(component, nodeSelector, options);
 
-    this.ldclient = LaunchDarkly.init(options.key);
+    this.ldclient = LaunchDarkly.init(options.key, options);
   }
 
   /**
@@ -42,6 +42,7 @@ class LaunchDarklyConfigurationManager extends RemoteConfigurationManager {
             return resolve({});
           }
           this.ldclient.close();
+          // TODO: re-construct structure of feature flags and merge them together with config tree, then return.
           return resolve(flagState.allValues());
         });
       });

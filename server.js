@@ -8,9 +8,9 @@ let requestHandler = function(request, response) {
         "name": "Steve"
       },
       "holiday": "Christmas",
-      "isOffline": false,
+      "isOffline": "NEVER!",
       "cacheConfigurationManager": {
-        ttl: 116000
+        ttl: 25000
       }
     }));
   }, 2000);

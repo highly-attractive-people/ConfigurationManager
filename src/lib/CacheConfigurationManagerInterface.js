@@ -12,9 +12,8 @@ const defaultOptions = {
   cacheConfigPath: 'cacheConfigurationManager'
 };
 
-// TODO: reset ttl when reading component config, as this may contain an updated TTL.
-//  - define default config path
-//  - call this.component.get(cache.config.path) to reset tll on this.getRebuiltCacheObject
+// TODO:
+//  - Fix stampede when rebuilding cache takes longer than number of requests received.
 //  - Define a Cache object instead of using a data object and assuming properties?
 //    - Cache.getData()
 //    - Cache.getLastModified()
@@ -124,13 +123,19 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
    *  A cache object.
    */
   getRebuiltCacheObject() {
-    console.log('rebuilding cache object'.red);
+    console.log('rebuilding cache object'.red.bold);
     return this.component.buildTree()
       .then(this.resetCacheOptions)
       .then(this.writeCache)
       .then(this.readAndSetCacheInMemory);
   }
 
+  /**
+   * Inspects configuration tree to reset CacheConfigurationManager's own
+   * options at run-time.
+   *
+   * @param {Hashable} tree
+   */
   resetCacheOptions(tree) {
     let configOptions = {};
 
@@ -155,14 +160,11 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
    * @return {<Promise>Void}
    */
   writeCache(tree) {
-    console.log("writing cache to file".grey);
+    console.log("writing cache to file".yellow);
     // throw new Error('You must provide an implementation for the setCache method.');
     const cacheObject = this.prepareCacheObject(tree);
 
     return jsonFile.writeFile(cacheFileName, cacheObject, {spaces: 2, EOL: '\r\n'})
-      .then( res => {
-        console.log("writing complete".grey);
-      })
       .catch(error => {
         console.error(error);
       });
@@ -172,7 +174,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
    * Read cache from persistent storage
    */
   readCacheFromFile() {
-    console.log('Reading cache from file'.grey);
+    console.log('Reading cache from file'.yellow);
     return jsonFile.readFile(cacheFileName);
   }
 
@@ -188,12 +190,11 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
       return Promise.resolve(cache);
     }
     else {
-      console.log('No in-memory cache found'.yellow);
       return this.readAndSetCacheInMemory()
         // If there was an error reading cache from file, then we attempt to
         // write the rebuild the cache and persist it.
         .catch( error => {
-          console.log('no file found, but building anyway...'.grey);
+          console.log('no cache persistence found, rebuilding now...'.red);
           return getRebuiltCacheObject()
             .catch( error => console.error(error));
         });
