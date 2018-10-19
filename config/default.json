@@ -1,8 +1,5 @@
 {
-  "user": {
-    "name": "Sally",
-    "age": 37
-  },
   "isOffline": true,
-  "connectedToLaunchDarkly": false
+  "connectedToLaunchDarkly": false,
+  "whateverConfig": "???"
 }

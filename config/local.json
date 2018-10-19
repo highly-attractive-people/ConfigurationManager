@@ -1,5 +1,3 @@
 {
-  "user": {
-    "age": 40
-  }
+  "whateverConfig": "This is from local environmental configuration."
 }

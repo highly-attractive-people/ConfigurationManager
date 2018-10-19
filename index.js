@@ -10,7 +10,7 @@ const NodeSelector = require('./src/lib/NodeSelector');
 const staticConfig = new StaticConfigurationManager();
 const remoteConfig = new RemoteConfigurationManager(staticConfig, NodeSelector, {timeout:3000});
 const ldConfig = new LaunchDarklyConfigurationManager(remoteConfig, NodeSelector, {key: 'sdk-68160bd1-a59a-4339-bd5c-858d281540a6', stream: false});
-const cacheConfig = new CacheConfigurationManager(remoteConfig, NodeSelector, {ttl: 15000});
+const cacheConfig = new CacheConfigurationManager(ldConfig, NodeSelector, {ttl: 15000});
 
 
 // ldConfig.get('connectedToLaunchDarkly')
@@ -52,14 +52,34 @@ const cacheConfig = new CacheConfigurationManager(remoteConfig, NodeSelector, {t
 
 // cacheConfig.get('user').then( value => console.log(value));
 
-let sampleKeys = ['isOffline', "connectedToLaunchDarkly"];
+let sampleKeys = ['isOffline', "connectedToLaunchDarkly", "whateverConfig"];
 function main() {
   let configKey = sampleKeys[Math.floor(Math.random() * sampleKeys.length)];
-  console.log('—————————————————————');
+
+  // staticConfig.get(configKey)
+  // remoteConfig.get(configKey)
+  // ldConfig.get(configKey)
   cacheConfig.get(configKey)
-    .then(value => console.log(colors.grey.bold(configKey + ': ' + value)) );
+    .then(value => {
+      console.log(colors.grey.bold(configKey + ': ' + value));
+      console.log('—————————————————————');
+    });
 
 }
 
 main();
-setInterval(main, 8000);
+setInterval(main, 5000);
+
+
+const http = require('http');
+
+let requestHandler = function(request, response) {
+  if (request.url === '/') {
+    cacheConfig.clearCache();
+    response.end('👋');
+  }
+}
+
+let server = http.createServer(requestHandler);
+
+server.listen(3001);
