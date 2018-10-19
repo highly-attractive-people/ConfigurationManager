@@ -195,7 +195,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
         // write the rebuild the cache and persist it.
         .catch( error => {
           console.log('no cache persistence found, rebuilding now...'.red);
-          return getRebuiltCacheObject()
+          return this.getRebuiltCacheObject()
             .catch( error => console.error(error));
         });
     }

@@ -14,39 +14,28 @@ const defaultOptions = {
  * @extends RemoteConfigurationManager
  */
 class LaunchDarklyConfigurationManager extends RemoteConfigurationManager {
-  /**
-   * @inheritdoc
-   */
-  constructor(component, nodeSelector, options = {}) {
-    super(component, nodeSelector, options);
-
-    this.ldclient = LaunchDarkly.init(options.key, options);
-  }
-
+  
   /**
    * @inheritdoc
    */
   _buildTree() {
     console.log('Building LD tree..');
+    this.ldClient = LaunchDarkly.init(this.options.key, this.options);
+
     const anonymousUser = {
       anonymous: true,
       key:''
     };
 
-    return new Promise( (resolve, reject) => {
-      this.ldclient.once('ready', () => {
-        this.ldclient.allFlagsState(anonymousUser, (error, flagState) => {
-          if (error) {
-            console.error(error);
-            this.ldclient.close();
-            return resolve({});
-          }
-          this.ldclient.close();
-          // TODO: re-construct structure of feature flags and merge them together with config tree, then return.
-          return resolve(flagState.allValues());
-        });
-      });
-    });
+    return this.ldClient.waitForInitialization()
+      .then(client => {
+        return client.allFlagsState(anonymousUser)
+          .then(flagState => {
+            client.close();
+            return flagState.allValues();
+          })
+      })
+      .catch( e => console.error(e));
   }
 }
 
