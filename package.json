@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "better-queue": "^3.8.10",
     "config": "^2.0.1",
     "jsonfile": "^5.0.0",
     "ldclient-node": "^5.5.0",

@@ -4,6 +4,7 @@ const Timer = require('./Timer');
 const TreeSelector = require('./TreeSelector');
 const { mergeDeepRight } = require('ramda');
 const jsonFile = require('jsonfile');
+const Queue = require('better-queue');
 const colors = require('colors');
 
 const cacheFileName ='config/CacheConfigurationManager.db.json';
@@ -58,9 +59,11 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
     this.component = component;
     this.nodeSelector = nodeSelector;
     this.options = mergeDeepRight(defaultOptions, options);
+    this.queue = new Queue(this.buildTreeQueueHandler);
 
     this.get = this.get.bind(this);
     this.buildTree = this.buildTree.bind(this);
+    this.buildTreeQueueHandler = this.buildTreeQueueHandler.bind(this);
     this.getValidConfigurationObject = this.getValidConfigurationObject.bind(this);
     this.getRebuiltCacheObject = this.getRebuiltCacheObject.bind(this);
     this.writeCache = this.writeCache.bind(this);
@@ -89,9 +92,31 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
    * @inheritdoc
    */
   buildTree() {
-    return this.getTTL()
-      .then(this.getValidConfigurationObject)
-      .then(this.extractCacheData);
+    return new Promise( (resolve, reject) => {
+      this.queue.push(this, (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        else {
+          resolve(results);
+        }
+      });
+    });
+  }
+
+  /**
+   * Helper method to handle queue operations for building the tree.
+   */
+  buildTreeQueueHandler(context, callback) {
+    return context.getTTL()
+      .then(context.getValidConfigurationObject)
+      .then(context.extractCacheData)
+      .then( results => {
+        callback(null, results);
+      })
+      .catch( error => {
+        callback(error);
+      })
   }
 
   /**
@@ -117,7 +142,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
   }
 
   /**
-   * Rebuild cache and return a cache object from the canonical source.
+   * Rebuild cache and return a cache object from the canonical source (component).
    *
    * @return {Cache}
    *  A cache object.
@@ -181,6 +206,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
   /**
    * Indiscriminately fetch cache object as it is available. A new cache object
    * will be created an existing one is found.
+   * 
    * @return {[type]} [description]
    */
   getCache() {
