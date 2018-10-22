@@ -26,7 +26,7 @@ const defaultOptions = {
 /**
  * Private in-memory cache storage.
  */
-var cache;
+var privateCache;
 
 /**
  * Cache Configuration Manager Interface
@@ -185,9 +185,9 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
    */
   getCache() {
     // throw new Error('You must provide an implementation for the getCache method.');
-    if (cache) {
+    if (privateCache) {
       console.log('In-memory cache used'.green);
-      return Promise.resolve(cache);
+      return Promise.resolve(privateCache);
     }
     else {
       return this.readAndSetCacheInMemory()
@@ -214,8 +214,8 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
    */
   setCacheInMemory(fileContents) {
     console.log('Persisting cache in-memory'.grey)
-    cache = fileContents;
-    return Promise.resolve(cache);
+    privateCache = fileContents;
+    return Promise.resolve(privateCache);
   }
 
   /**
@@ -224,7 +224,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
   clearCache() {
     // throw new Error('You must provide an implementation for the clearCache method.');
     console.log("Clearing cache".red);
-    cache = undefined;
+    privateCache = undefined;
 
     return new Promise( (resolve, reject) => {
       require('fs').unlink(cacheFileName, error => {
@@ -260,9 +260,9 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
    * @return {Timer}
    */
   getTTL() {
-    return this.getCache().then( cache => {
-      if (cache && cache.lastModified) {
-        return Promise.resolve(new Timer(cache.lastModified, this.options.ttl));
+    return this.getCache().then( cacheObject => {
+      if (cacheObject && cacheObject.lastModified) {
+        return Promise.resolve(new Timer(cacheObject.lastModified, this.options.ttl));
       }
       else {
         return Promise.reject(Error("Could not read lastModified value from cache."));
