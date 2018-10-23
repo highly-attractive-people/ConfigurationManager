@@ -2,10 +2,33 @@
 
 const RemoteConfigurationManager = require('./RemoteConfigurationManager');
 const LaunchDarkly = require('ldclient-node');
+const R = require('ramda');
 
 const defaultOptions = {
   key: null
 };
+
+function texturize(path, value) {
+  let keys = path.split('.');
+  let retVal = value;
+
+  while (keys.length) {
+    let key = keys.pop();
+    retVal = R.objOf(key, retVal);
+  }
+
+  return retVal;
+}
+
+
+function makeTree(ldResponseObject) {
+  return R.mergeAll(
+    R.values(
+      R.mapObjIndexed(
+        (val, key, obj) => {
+          return texturize(key, val);
+        })(ldResponseObject)));
+}
 
 /**
  * Launch Darkly Configuration Manager
@@ -14,7 +37,7 @@ const defaultOptions = {
  * @extends RemoteConfigurationManager
  */
 class LaunchDarklyConfigurationManager extends RemoteConfigurationManager {
-  
+
   /**
    * @inheritdoc
    */
@@ -32,11 +55,32 @@ class LaunchDarklyConfigurationManager extends RemoteConfigurationManager {
         return client.allFlagsState(anonymousUser)
           .then(flagState => {
             client.close();
-            return flagState.allValues();
+            return makeTree(flagState.allValues());
           })
       })
       .catch( e => console.error(e));
   }
+
+  // makeTree(ldResponseObject) {
+  //   return R.mergeAll(
+  //     R.values(
+  //       R.mapObjIndexed(
+  //         (val, key, obj) => {
+  //           return texturize(key, val);
+  //         })(ldResponseObject)));
+  // }
+
+  // texturize(path, value) {
+  //   let keys = path.split('.');
+  //   let retVal = value;
+  //
+  //   while (keys.length) {
+  //     let key = keys.pop();
+  //     retVal = R.objOf(key, retVal);
+  //   }
+  //
+  //   return retVal;
+  // }
 }
 
 module.exports = LaunchDarklyConfigurationManager;

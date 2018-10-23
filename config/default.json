@@ -1,5 +1,8 @@
 {
   "isOffline": true,
   "connectedToLaunchDarkly": false,
-  "whateverConfig": "???"
+  "whateverConfig": "???",
+  "user": {
+    "name": "Sally"
+  }
 }
