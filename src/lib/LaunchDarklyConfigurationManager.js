@@ -60,27 +60,6 @@ class LaunchDarklyConfigurationManager extends RemoteConfigurationManager {
       })
       .catch( e => console.error(e));
   }
-
-  // makeTree(ldResponseObject) {
-  //   return R.mergeAll(
-  //     R.values(
-  //       R.mapObjIndexed(
-  //         (val, key, obj) => {
-  //           return texturize(key, val);
-  //         })(ldResponseObject)));
-  // }
-
-  // texturize(path, value) {
-  //   let keys = path.split('.');
-  //   let retVal = value;
-  //
-  //   while (keys.length) {
-  //     let key = keys.pop();
-  //     retVal = R.objOf(key, retVal);
-  //   }
-  //
-  //   return retVal;
-  // }
 }
 
 module.exports = LaunchDarklyConfigurationManager;
