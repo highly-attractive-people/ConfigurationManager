@@ -9,12 +9,11 @@ const colors = require('colors');
 
 const cacheFileName ='config/CacheConfigurationManager.db.json';
 const defaultOptions = {
-  ttl: 3000,
+  ttl: 5000,
   cacheConfigPath: 'cacheConfigurationManager'
 };
 
 // TODO:
-//  - Fix stampede when rebuilding cache takes longer than number of requests received.
 //  - Define a Cache object instead of using a data object and assuming properties?
 //    - Cache.getData()
 //    - Cache.getLastModified()
@@ -28,6 +27,7 @@ const defaultOptions = {
  * Private in-memory cache storage.
  */
 var privateCache;
+
 
 /**
  * Cache Configuration Manager Interface
@@ -150,7 +150,6 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
   getRebuiltCacheObject() {
     console.log('rebuilding cache object'.red.bold);
     return this.component.buildTree()
-      .then(this.resetCacheOptions)
       .then(this.writeCache)
       .then(this.readAndSetCacheInMemory);
   }
@@ -159,13 +158,13 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
    * Inspects configuration tree to reset CacheConfigurationManager's own
    * options at run-time.
    *
-   * @param {Hashable} tree
+   * @param {Hashable} cacheObject
    */
-  resetCacheOptions(tree) {
+  resetCacheOptions(cacheObject) {
     let configOptions = {};
 
     try {
-      if (configOptions = this.nodeSelector.query(tree, this.options.cacheConfigPath)) {
+      if (configOptions = this.nodeSelector.query(this.extractCacheData(cacheObject), this.options.cacheConfigPath)) {
         this.options = mergeDeepRight(defaultOptions, configOptions);
       }
     }
@@ -173,7 +172,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
       console.error(error);
     }
 
-    return Promise.resolve(tree);
+    return Promise.resolve(cacheObject);
   }
 
   /**
@@ -206,7 +205,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
   /**
    * Indiscriminately fetch cache object as it is available. A new cache object
    * will be created an existing one is found.
-   * 
+   *
    * @return {[type]} [description]
    */
   getCache() {
@@ -286,7 +285,9 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
    * @return {Timer}
    */
   getTTL() {
-    return this.getCache().then( cacheObject => {
+    return this.getCache()
+    .then(this.resetCacheOptions)
+    .then( cacheObject => {
       if (cacheObject && cacheObject.lastModified) {
         return Promise.resolve(new Timer(cacheObject.lastModified, this.options.ttl));
       }
