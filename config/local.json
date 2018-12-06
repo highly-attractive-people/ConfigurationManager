@@ -1,3 +1,4 @@
 {
-  "whateverConfig": "This is from local environmental configuration."
+  "whateverConfig": "from Environment",
+  "nested": {"param": "Blueberry"}
 }

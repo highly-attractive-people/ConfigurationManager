@@ -8,4 +8,3 @@ yarn install
 
 ### TODO
 - Use Launch Darkly's REST APIs instead of their SDK
-- Fix stampede issue in Cache manager, so that the cache is built before attempting to handle more requests to build the tree

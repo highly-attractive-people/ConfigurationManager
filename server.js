@@ -2,14 +2,17 @@ const http = require('http');
 
 let requestHandler = function(request, response) {
   setInterval(() => {
-    response.end(JSON.stringify({
-      "connectedToLaunchDarkly": "Who needs Launch Darkly?",
-      "isOffline": "Nope!!",
-      "cacheConfigurationManager": {
-        ttl: 15000
+    response.end(JSON.stringify(
+
+      {
+        "cacheConfigurationManager": {ttl: 50000},
+        "isOffline": false,
+        "whateverConfig": "from Remote",
+        "nested": {"param": "Banana from Remote"}
       }
-    }));
-  }, 2000);
+
+  ));
+}, 1);
 }
 
 let server = http.createServer(requestHandler);

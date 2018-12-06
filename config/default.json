@@ -1,8 +1,5 @@
 {
   "isOffline": true,
-  "connectedToLaunchDarkly": false,
-  "whateverConfig": "???",
-  "user": {
-    "name": "Sally"
-  }
+  "whateverConfig": "from Default",
+  "nested": {"param": "Apple"}
 }

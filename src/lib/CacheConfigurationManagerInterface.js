@@ -120,7 +120,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
   }
 
   /**
-   * Get a valid cache object according to the specified TTL.
+   * Get a valid (as in not expired) cache object according to the specified TTL.
    *
    * @param  {Timer} ttl
    *  A timer object representing the TTL.
@@ -169,7 +169,7 @@ class CacheConfigurationManagerInterface extends ConfigurationManagerInterface {
       }
     }
     catch (error) {
-      console.error(error);
+      // it's acceptable for this cache config to not be set.
     }
 
     return Promise.resolve(cacheObject);
