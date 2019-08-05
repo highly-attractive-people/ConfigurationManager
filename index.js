@@ -3,14 +3,15 @@
 const colors = require('colors');
 const StaticConfigurationManager = require('./src/lib/StaticConfigurationManager');
 const RemoteConfigurationManager = require('./src/lib/RemoteConfigurationManager');
-const LaunchDarklyConfigurationManager = require('./src/lib/LaunchDarklyConfigurationManager');
+// const LaunchDarklyConfigurationManager = require('./src/lib/LaunchDarklyConfigurationManager');
 const CacheConfigurationManager = require('./src/lib/CacheConfigurationManagerInterface');
 const NodeSelector = require('./src/lib/NodeSelector');
 
-const staticConfig = new StaticConfigurationManager();
-const remoteConfig = new RemoteConfigurationManager(staticConfig, NodeSelector, {timeout:3000});
-const ldConfig = new LaunchDarklyConfigurationManager(remoteConfig, NodeSelector, {key: 'sdk-68160bd1-a59a-4339-bd5c-858d281540a6', stream: false});
-const cacheConfig = new CacheConfigurationManager(ldConfig, NodeSelector, {ttl: 15000});
+// For demo purpose, I will re-assign decorated config to make commenting out easier.
+var conf = new StaticConfigurationManager();
+var conf = new RemoteConfigurationManager(conf, NodeSelector, {timeout:3000});
+// var conf = new LaunchDarklyConfigurationManager(conf, NodeSelector, {key: 'sdk-68160bd1-a59a-4339-bd5c-858d281540a6', stream: false});
+var cacheConfig = new CacheConfigurationManager(conf, NodeSelector, {ttl: 15000});
 
 
 // ldConfig.get('connectedToLaunchDarkly')
@@ -68,7 +69,7 @@ function main() {
 }
 
 main();
-setInterval(main, 5000);
+setInterval(main, 1000);
 
 
 const http = require('http');
