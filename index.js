@@ -1,86 +1,85 @@
-"use strict";
+'use strict';
+
+const conman = require('./src/lib/conman');
+const getconman = require('./getcoman');
+const nconfSource = require('./src/lib/sources/nconf');
+const memorySource = require('./src/lib/sources/memory');
+const s3Source = require('./src/lib/sources/s3');
+const obfuscated = require('./src/lib/sources/obfuscated');
 
 const colors = require('colors');
-const StaticConfigurationManager = require('./src/lib/StaticConfigurationManager');
-const RemoteConfigurationManager = require('./src/lib/RemoteConfigurationManager');
-// const LaunchDarklyConfigurationManager = require('./src/lib/LaunchDarklyConfigurationManager');
-const CacheConfigurationManager = require('./src/lib/CacheConfigurationManagerInterface');
-const NodeSelector = require('./src/lib/NodeSelector');
 
-// For demo purpose, I will re-assign decorated config to make commenting out easier.
-var conf = new StaticConfigurationManager();
-var conf = new RemoteConfigurationManager(conf, NodeSelector, {timeout:3000});
-// var conf = new LaunchDarklyConfigurationManager(conf, NodeSelector, {key: 'sdk-68160bd1-a59a-4339-bd5c-858d281540a6', stream: false});
-var cacheConfig = new CacheConfigurationManager(conf, NodeSelector, {ttl: 15000});
+const firstMemory = memorySource(
+  { name: 'mem1' },
+  {
+    fox_staging: { encoders: { slce199_fxd1: 'JOSE' } }
+  }
+);
+const secondMemory = memorySource(
+  { name: 'mem2' },
+  {
+    fox_staging: { encoders: { slce199_fxd1: 'YENY' } }
+  }
+);
+const s3dev = s3Source({
+  Bucket: 'dcg-video-live-encoder-service-dev',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_DEFAULT_REGION,
+  sessionToken: process.env.AWS_SESSION_TOKEN,
+  name: 's3dev'
+});
 
 
-// ldConfig.get('connectedToLaunchDarkly')
-//   .then(function(value) {
-//     console.log('VALUE: ', value)
-//   })
-//   .catch(err => {
-//     console.log('ERROR TOP-LEVEL', err);
-//   });
+const obs = obfuscated(
+  { name: 'obs' },
+  {
+    fox_staging: {
+      encoders: {
+        slce199_fxd1: 'JOSE',
+        slce199_fxd1: ['Eduardo', 'Perdomo', 'Zelaya']
+      },
+      isBoolean: true,
+      isNumber: 1344123
+    }
+  }
+);
+const nconfDefault = nconfSource({ name: 'defaultNconf' });
 
-
-
-// remoteConfig.buildTree().then(cacheConfig.saveCache).then( () => {
-//   console.log('cache was built.');
-// });
-
-// cacheConfig.getCache().then( cache => {
-//   console.log(cache);
-//   cacheConfig.getCache().then( cache => console.log(cache));
-// });
-
-// cacheConfig.readCache()
-//   .then( (data) => {
-//     console.log('read file OK.');
-//     console.log(data);
-//   })
-//   .catch( error => {
-//     console.log(error);
-//   });
-
-// cacheConfig.clearCache().then( () => {
-//   cacheConfig.getTTL()
-//     .then(timer => {
-//       console.log('Is expired: ', timer.isExpired(new Date().getTime()));
-//       console.log('Time Remaining: ', timer.timeRemaining(new Date().getTime()));
-//       cacheConfig.getCache().then( cache => console.log(cache));
-//     });
-// });
-
-// cacheConfig.get('user').then( value => console.log(value));
-
-let sampleKeys = ['isOffline', "connectedToLaunchDarkly", "whateverConfig"];
 function main() {
-  let configKey = sampleKeys[Math.floor(Math.random() * sampleKeys.length)];
-
-  // staticConfig.get(configKey)
-  // remoteConfig.get(configKey)
-  // ldConfig.get(configKey)
-  cacheConfig.get(configKey)
-    .then(value => {
-      console.log(colors.grey.bold(configKey + ': ' + value));
-      console.log('—————————————————————');
-    });
-
+  console.log(JSON.stringify(getconman('fox_staging.encoders.slce199_fxd2'), null, 4));
 }
+let counter = 0;
+setInterval(() => {
+  firstMemory
+    .add({
+      fox_staging: { encoders: { slce199_fxd1: 'JOSE-' + counter } }
+    })
+    .add({
+      fox_staging: { encoders: { slce199_fxd2: 'JOSE-' + counter } }
+    });
+  counter++;
+}, 1000);
 
-main();
-setInterval(main, 1000);
+conman({ ttl: 1000 * 15 })
+  // .addSource(nconfDefault)
+  .addSource(firstMemory)
+  .addSource(secondMemory)
+  .addSource(s3dev)
+  .addSource(obs)
+  .build()
+  .then(() => {
+    setInterval(main, 3000);
+    let requestHandler = function(request, response) {
+      if (request.url === '/') {
+        conman.build();
+        response.end('👋 BYE');
+      }
+    };
 
+    let server = http.createServer(requestHandler);
+
+    server.listen(3001);
+  });
 
 const http = require('http');
-
-let requestHandler = function(request, response) {
-  if (request.url === '/') {
-    cacheConfig.clearCache();
-    response.end('👋');
-  }
-}
-
-let server = http.createServer(requestHandler);
-
-server.listen(3001);

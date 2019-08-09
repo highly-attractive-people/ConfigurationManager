@@ -7,6 +7,10 @@ const TreeSelector = require('./TreeSelector');
  * specified by the provided Xpath-like string representation.
  */
 class NodeSelector extends TreeSelector {
+  constructor(options) {
+    super();
+    this.options = options;
+  }
   /**
    * Query a tree structure provided a XPath-like string.
    *
@@ -14,19 +18,23 @@ class NodeSelector extends TreeSelector {
    * @param  {string} property
    * @return {Mixed}
    */
-  static query(tree, property) {
-    if(tree === null || tree === undefined){
-      throw new Error('Calling NodeSelector.query() with null or undefined tree argument');
+  query(tree, property) {
+    if (tree === null || tree === undefined) {
+      throw new Error(
+        'Calling NodeSelector.query() with null or undefined tree argument'
+      );
     }
 
-    if(property === null || property === undefined){
-      throw new Error('Calling NodeSelector.query() with null or undefined property argument');
+    if (property === null || property === undefined) {
+      throw new Error(
+        'Calling NodeSelector.query() with null or undefined property argument'
+      );
     }
 
     var value = _query(tree, property);
 
     if (value === undefined) {
-      throw new Error('Property "' + property + '" is not defined.');
+      this.options.logger.error('Property "' + property + '" is not defined.');
     }
 
     return value;
@@ -41,9 +49,11 @@ class NodeSelector extends TreeSelector {
  * @return {Mixed}
  */
 function _query(tree, property) {
-  let propertyNameParts = Array.isArray(property) ? property : property.split('.'),
-      name = propertyNameParts[0],
-      value = tree[name];
+  let propertyNameParts = Array.isArray(property)
+      ? property
+      : property.split('.'),
+    name = propertyNameParts[0],
+    value = tree[name];
 
   if (propertyNameParts.length <= 1) {
     return value;
