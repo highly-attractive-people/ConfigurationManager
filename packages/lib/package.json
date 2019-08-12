@@ -1,6 +1,6 @@
 {
   "name": "@jepz20/conman",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Configuration manager that supports ttl and plugabble sources",
   "main": "index.js",
   "scripts": {
@@ -8,5 +8,5 @@
   },
   "author": "",
   "license": "ISC",
-  "gitHead": "c7bd7f09cce9abb8a5b89c64ebd06d4de5600b7c"
+  "gitHead": "3986c737ef95083fb27b076728dbe25b2c776ea6"
 }

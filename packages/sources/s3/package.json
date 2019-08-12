@@ -1,6 +1,6 @@
 {
   "name": "@jepz20/conman-s3-source",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "s3 for conman configuration manager",
   "main": "index.js",
   "scripts": {
@@ -12,5 +12,5 @@
     "aws-sdk": "^2.508.0",
     "ramda": "^0.26.1"
   },
-  "gitHead": "c7bd7f09cce9abb8a5b89c64ebd06d4de5600b7c"
+  "gitHead": "3986c737ef95083fb27b076728dbe25b2c776ea6"
 }
