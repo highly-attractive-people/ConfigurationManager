@@ -1,6 +1,6 @@
 {
   "name": "@jepz20/conman",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Configuration manager that supports ttl and plugabble sources",
   "main": "index.js",
   "scripts": {

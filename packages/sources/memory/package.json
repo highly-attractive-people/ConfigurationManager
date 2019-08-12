@@ -1,6 +1,6 @@
 {
   "name": "@jepz20/conman-memory-source",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "memory source for conman configuration manager",
   "main": "index.js",
   "scripts": {

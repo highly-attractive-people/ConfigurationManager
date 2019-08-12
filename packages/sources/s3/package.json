@@ -1,6 +1,6 @@
 {
   "name": "@jepz20/conman-s3-source",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "s3 for conman configuration manager",
   "main": "index.js",
   "scripts": {
