@@ -1,5 +1,5 @@
 {
-  "name": "conman-memory-source",
+  "name": "@jepz20/conman-memory-source",
   "version": "0.0.1",
   "description": "memory source for conman configuration manager",
   "main": "index.js",
@@ -10,5 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "ramda": "^0.26.1"
-  }
+  },
+  "gitHead": "c7bd7f09cce9abb8a5b89c64ebd06d4de5600b7c"
 }

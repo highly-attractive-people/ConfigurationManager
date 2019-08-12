@@ -1,5 +1,5 @@
 {
-  "name": "conman-nconf-source",
+  "name": "@jepz20/conman-nconf-source",
   "version": "0.0.1",
   "description": "nconf for conman configuration manager",
   "main": "index.js",
@@ -12,5 +12,6 @@
     "app-root-path": "^2.2.1",
     "nconf": "^0.10.0",
     "ramda": "^0.26.1"
-  }
+  },
+  "gitHead": "c7bd7f09cce9abb8a5b89c64ebd06d4de5600b7c"
 }

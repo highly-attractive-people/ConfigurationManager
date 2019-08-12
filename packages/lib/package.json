@@ -1,5 +1,5 @@
 {
-  "name": "conman",
+  "name": "@jepz20/conman",
   "version": "0.0.1",
   "description": "Configuration manager that supports ttl and plugabble sources",
   "main": "index.js",
@@ -7,5 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "gitHead": "c7bd7f09cce9abb8a5b89c64ebd06d4de5600b7c"
 }
