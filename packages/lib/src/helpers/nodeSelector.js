@@ -1,23 +1,11 @@
 'use strict';
 
-const TreeSelector = require('./TreeSelector');
-
 /**
  * Node Selector traverses a tree structure and fetches the value of a node,
  * specified by the provided Xpath-like string representation.
  */
-class NodeSelector extends TreeSelector {
-  constructor(options) {
-    super();
-    this.options = options;
-  }
-  /**
-   * Query a tree structure provided a XPath-like string.
-   *
-   * @param  {object} tree
-   * @param  {string} property
-   * @return {Mixed}
-   */
+
+function nodeSelector(options) {
   query(tree, property) {
     if (tree === null || tree === undefined) {
       throw new Error(
@@ -34,10 +22,13 @@ class NodeSelector extends TreeSelector {
     var value = _query(tree, property);
 
     if (value === undefined) {
-      this.options.logger.error('Property "' + property + '" is not defined.');
+      options.logger.error('Property "' + property + '" is not defined.');
     }
 
     return value;
+  }
+  return {
+    query
   }
 }
 
@@ -67,4 +58,4 @@ function _query(tree, property) {
   return _query(value, propertyNameParts.slice(1));
 }
 
-module.exports = NodeSelector;
+module.exports = nodeSelector;

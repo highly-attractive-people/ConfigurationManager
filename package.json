@@ -1,5 +1,5 @@
 {
-  "name": "configmanagerdemo",
+  "name": "conman",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,13 +9,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "app-root-path": "2.2.1",
+    "aws-sdk": "2.506.0",
     "better-queue": "^3.8.10",
     "config": "^2.0.1",
-    "nconf": "0.10.0",
-    "aws-sdk": "2.506.0",
-    "app-root-path": "2.2.1",
     "jsonfile": "^5.0.0",
     "ldclient-node": "^5.5.0",
+    "lerna": "^3.16.4",
+    "nconf": "0.10.0",
     "ramda": "^0.25.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5"

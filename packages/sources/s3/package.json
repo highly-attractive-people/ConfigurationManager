@@ -1,0 +1,15 @@
+{
+  "name": "conman-s3-source",
+  "version": "1.0.0",
+  "description": "s3 for conman configuration manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.508.0",
+    "ramda": "^0.26.1"
+  }
+}

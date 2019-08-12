@@ -47,7 +47,7 @@ const obs = obfuscated(
 const nconfDefault = nconfSource({ name: 'defaultNconf' });
 
 function main() {
-  console.log(JSON.stringify(getconman('fox_staging.encoders.slce199_fxd2'), null, 4));
+  console.log(JSON.stringify(getconman(), null, 4));
 }
 let counter = 0;
 setInterval(() => {
@@ -62,11 +62,11 @@ setInterval(() => {
 }, 1000);
 
 conman({ ttl: 1000 * 15 })
-  // .addSource(nconfDefault)
-  .addSource(firstMemory)
-  .addSource(secondMemory)
-  .addSource(s3dev)
-  .addSource(obs)
+  .addSource(nconfDefault)
+  // .addSource(firstMemory)
+  // .addSource(secondMemory)
+  // .addSource(s3dev)
+  // .addSource(obs)
   .build()
   .then(() => {
     setInterval(main, 3000);

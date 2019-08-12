@@ -1,5 +1,5 @@
 const { mergeDeepRight } = require('ramda');
-const NodeSelector = require('./NodeSelector');
+const NodeSelector = require('./helpers/nodeSelector');
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
