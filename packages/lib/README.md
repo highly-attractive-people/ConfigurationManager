@@ -144,7 +144,7 @@ const key = conman.get();
 
 ### getObfuscate
 
-`conman.getObfuscate(key, options)` behaves exactly as `conman.get` but returns an obfuscated version of the key.
+`conman.getObfuscate(key, options)` behaves exactly as `conman.get` but returns an obfuscated version of the value.
 
 | Options | Description | Type | Default |
 | ------------- | ------------------------------------------------------------------------------ | ------- | ------------------------------- |
