@@ -2,7 +2,7 @@
   "name": "@jepz20/conman",
   "version": "0.0.4",
   "description": "Configuration manager that supports ttl and plugabble sources",
-  "main": "index.js",
+  "main": "./src/conman",
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
