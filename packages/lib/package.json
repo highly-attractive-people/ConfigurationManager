@@ -17,6 +17,7 @@
   "gitHead": "a1877d23a24042de10fa25296f519a3c681712f2",
   "lint-staged": {
     "src/**/*.*": [
+      "yarn lint",
       "prettier --write",
       "git add"
     ]
