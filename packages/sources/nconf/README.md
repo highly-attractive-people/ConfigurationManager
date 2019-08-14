@@ -18,7 +18,7 @@ const nconfSource = require('@jepz20/conman-nconf-source');
 
 const nconf = nconfSource({ name: 'defaultNconf' }); // you can assign a name
 
-conman({ ttl: 1000 * 15, logEnabled: true })
+conman()
   .addSource(nconf)
   .build();
 ```

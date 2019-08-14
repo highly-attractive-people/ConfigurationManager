@@ -11,7 +11,7 @@ Read the configuration from remote files store in s3.
 | region | AWS region| no |
 | sessionToken | AWS session token | yes |
 | Bucket | S3 Bucket | yes |
-| Key(optional) | File name | no |
+| Key(optional) | File name | nox |
 | name | source name | no |
 
 If the Key is missing it will grab and combine all the files from the Bucket.
@@ -30,7 +30,7 @@ const s3 = s3Source({
 });
 
 
-conman({ ttl: 1000 * 15, logEnabled: true })
+conman()
   .addSource(s3)
   .build();
 ```
