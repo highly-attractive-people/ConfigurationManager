@@ -1,0 +1,9 @@
+.idea
+.env
+.vscode
+.nyc_output
+/coverage
+/docs
+junit.xml
+node_modules
+conman.cache.json

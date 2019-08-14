@@ -1,5 +1,5 @@
-const conman = require('./src/lib/conman');
+const conman = require('./packages/lib/conman');
 
 module.exports = function(key) {
-  return conman.get(key);
+  return conman.getObfuscate(key, { percentage: 0.5, separator: '' });
 };

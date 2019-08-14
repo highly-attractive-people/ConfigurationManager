@@ -5,8 +5,8 @@
  * specified by the provided Xpath-like string representation.
  */
 
-function nodeSelector(options) {
-  query(tree, property) {
+function nodeSelector(logger) {
+  function query(tree, property) {
     if (tree === null || tree === undefined) {
       throw new Error(
         'Calling NodeSelector.query() with null or undefined tree argument'
@@ -22,14 +22,14 @@ function nodeSelector(options) {
     var value = _query(tree, property);
 
     if (value === undefined) {
-      options.logger.error('Property "' + property + '" is not defined.');
+      logger('log', 'Property "' + property + '" is not defined.');
     }
 
     return value;
   }
   return {
     query
-  }
+  };
 }
 
 /**

@@ -4,12 +4,32 @@
   "description": "Configuration manager that supports ttl and plugabble sources",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "precommit": "lint-staged"
   },
   "author": "",
   "license": "ISC",
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "a1877d23a24042de10fa25296f519a3c681712f2"
+  "gitHead": "a1877d23a24042de10fa25296f519a3c681712f2",
+  "dependencies": {
+    "app-root-path": "^2.2.1",
+    "jsonfile": "^5.0.0"
+  },
+  "devDependencies": {
+    "jest": "^24.8.0",
+    "jest-fetch-mock": "^2.1.2",
+    "jest-junit": "^7.0.0",
+    "prettier": "^1.16.4",
+    "prettier-eslint-cli": "^4.7.1",
+    "lint-staged": "^7.3.0"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,json,css}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
 }
