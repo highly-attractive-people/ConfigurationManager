@@ -31,14 +31,10 @@ let ttlInterval;
 let selector;
 let logger;
 
-/**
- * Wraps data into a "cache" object.
- * @return {Cache}
- */
 function _prepareCacheObject(tree) {
   return {
     lastModified: new Date().getTime(),
-    data: tree
+    data: tree,
   };
 }
 
