@@ -7,7 +7,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "precommit": "lint-staged",
-    "prettify": "prettier --write"
+    "lint": "node_modules/.bin/eslint \"**/*.js\" --ignore-path .eslintignore"
   },
   "author": "",
   "license": "ISC",
@@ -23,39 +23,44 @@
   },
   "dependencies": {
     "app-root-path": "^2.2.1",
-    "jsonfile": "^5.0.0"
+    "jsonfile": "^5.0.0",
+    "ramda": "^0.26.1"
   },
   "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-loader": "1.9.0",
+    "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-jest": "^22.15.1",
+    "eslint-plugin-prettier": "2.7.0",
+    "husky": "^0.14.3",
     "jest": "^24.8.0",
     "jest-fetch-mock": "^2.1.2",
     "jest-junit": "^7.0.0",
+    "lint-staged": "^7.3.0",
     "prettier": "1.18.2",
-    "prettier-eslint-cli": "4.7.1",
-    "eslint-plugin-prettier": "2.7.0",
-    "eslint-loader": "1.9.0",
-    "eslint-plugin-import": "2.8.0",
-    "husky": "^0.14.3",
-    "lint-staged": "^7.3.0"
+    "prettier-eslint-cli": "4.7.1"
   },
   "eslintConfig": {
-    "extends": "react-app",
-    "plugins": [
+    "extends": [
+      "airbnb-base",
       "prettier"
     ],
+    "plugins": [
+      "jest"
+    ],
     "rules": {
-      "prettier/prettier": "error",
-      "import/order": [
-        "error",
-        {
-          "groups": [
-            [
-              "builtin",
-              "external",
-              "internal"
-            ]
-          ]
-        }
-      ]
+      "no-underscore-dangle": 0,
+      "no-use-before-define": 0,
+      "jest/no-disabled-tests": "warn",
+      "jest/no-focused-tests": "error",
+      "jest/no-identical-title": "error",
+      "jest/prefer-to-have-length": "warn",
+      "jest/valid-expect": "error"
+    },
+    "env": {
+      "jest/globals": true
     }
   }
 }

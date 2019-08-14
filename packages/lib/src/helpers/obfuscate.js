@@ -59,6 +59,7 @@ function _obfuscate(val, params) {
 
   return obfuscateStr(val.toString(), params);
 }
+
 function obfuscate(val, userParams) {
   const params = { ...defaultParams, ...userParams };
 

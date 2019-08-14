@@ -1,9 +1,34 @@
-'use strict';
-
 /**
  * Node Selector traverses a tree structure and fetches the value of a node,
  * specified by the provided Xpath-like string representation.
  */
+
+/**
+ * Private helper function to iterate over tree recursively.
+ *
+ * @param  {object} tree
+ * @param  {string} property
+ * @return {Mixed}
+ */
+function _query(tree, property) {
+  const propertyNameParts = Array.isArray(property)
+    ? property
+    : property.split('.');
+
+  const name = propertyNameParts[0];
+  const value = tree[name];
+
+  if (propertyNameParts.length <= 1) {
+    return value;
+  }
+
+  // Note that typeof null === 'object'
+  if (value === null || typeof value !== 'object') {
+    return undefined;
+  }
+
+  return _query(value, propertyNameParts.slice(1));
+}
 
 function nodeSelector(logger) {
   function query(tree, property) {
@@ -19,10 +44,10 @@ function nodeSelector(logger) {
       );
     }
 
-    var value = _query(tree, property);
+    const value = _query(tree, property);
 
     if (value === undefined) {
-      logger('log', 'Property "' + property + '" is not defined.');
+      logger('log', `Property "${property}" is not defined.`);
     }
 
     return value;
@@ -30,32 +55,6 @@ function nodeSelector(logger) {
   return {
     query
   };
-}
-
-/**
- * Private helper function to iterate over tree recursively.
- *
- * @param  {object} tree
- * @param  {string} property
- * @return {Mixed}
- */
-function _query(tree, property) {
-  let propertyNameParts = Array.isArray(property)
-      ? property
-      : property.split('.'),
-    name = propertyNameParts[0],
-    value = tree[name];
-
-  if (propertyNameParts.length <= 1) {
-    return value;
-  }
-
-  // Note that typeof null === 'object'
-  if (value === null || typeof value !== 'object') {
-    return undefined;
-  }
-
-  return _query(value, propertyNameParts.slice(1));
 }
 
 module.exports = nodeSelector;

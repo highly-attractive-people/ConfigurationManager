@@ -1,6 +1,7 @@
-const conman = require('./conman');
 jest.mock('jsonfile');
 const jsonfile = require('jsonfile');
+
+const conman = require('./conman');
 
 const source = obj => {
   return {
@@ -70,7 +71,7 @@ describe('conman library', () => {
 
   it('should get one key from the config', async () => {
     const source1 = source({ test: 'test async' });
-    const config = await conman()
+    await conman()
       .addSource(source1)
       .build();
     conman.stop();
@@ -83,7 +84,7 @@ describe('conman library', () => {
       test2: 'test2',
       test3: 'test3'
     });
-    const config = await conman()
+    await conman()
       .addSource(source1)
       .build();
     conman.stop();
@@ -98,7 +99,7 @@ describe('conman library', () => {
         }
       }
     });
-    const config = await conman()
+    await conman()
       .addSource(source1)
       .build();
     conman.stop();
@@ -117,7 +118,7 @@ describe('conman library', () => {
       testBoolean: true,
       testArr: ['arr1', 'arr2']
     });
-    const config = await conman()
+    await conman()
       .addSource(source1)
       .build();
     conman.stop();
@@ -142,7 +143,7 @@ describe('conman library', () => {
       },
       testArr: ['arr-1', 'a-rr2']
     });
-    const config = await conman()
+    await conman()
       .addSource(source1)
       .build();
     conman.stop();
@@ -159,7 +160,7 @@ describe('conman library', () => {
         }
       }
     });
-    const config = await conman()
+    await conman()
       .addSource(source1)
       .build();
     conman.stop();
@@ -168,7 +169,7 @@ describe('conman library', () => {
 
   it('should get the complete config if no key is provided', async () => {
     const source1 = source({ test: 'test async', test2: 'test2' });
-    const config = await conman()
+    await conman()
       .addSource(source1)
       .build();
     conman.stop();
@@ -178,7 +179,7 @@ describe('conman library', () => {
   it('should rebuild when time expires', async () => {
     const source1 = source({ test: 'test', test3: 'test3' });
     jest.spyOn(source1, 'build');
-    const config = await conman({ ttl: 1000 })
+    await conman({ ttl: 1000 })
       .addSource(source1)
       .build();
 
@@ -201,7 +202,7 @@ describe('conman library', () => {
     const source1 = source({ test: 'test', test3: 'test3' });
     jest.spyOn(source1, 'build');
 
-    const config = await conman(options)
+    await conman(options)
       .addSource(source1)
       .build();
     expect(options.logger.log).toHaveBeenCalled();

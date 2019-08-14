@@ -1,28 +1,27 @@
-const { mergeDeepRight, pick } = require('ramda');
-const nodeSelector = require('./helpers/nodeSelector');
-const obfuscate = require('./helpers/obfuscate');
+const { mergeDeepRight } = require('ramda');
 const jsonfile = require('jsonfile');
 const appRoot = require('app-root-path');
+
+const nodeSelector = require('./helpers/nodeSelector');
+const obfuscate = require('./helpers/obfuscate');
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
-const defaultLogger = {
-  log: console.log,
-  error: console.log
-};
+const defaultLogger = console;
 
 const cacheFileName = `${appRoot}/conman.cache.json`;
 let isInitialized = false;
 
 const defaultOptions = {
-  // TODO CHANGE THIS TO 5 MINUTES
-  ttl: 10 * SECOND,
+  ttl: 5 * MINUTE,
   logEnabled: false,
   logger: defaultLogger,
   useFile: true,
   cacheFileName
 };
+
+let conman;
 
 let sources = [];
 let options = defaultOptions;
@@ -38,48 +37,49 @@ function _prepareCacheObject(tree) {
   };
 }
 
-const _log = options => (type, ...args) => {
-  if (options.logEnabled) {
-    options.logger[type](...args);
+const _log = opts => (type, ...args) => {
+  if (opts.logEnabled) {
+    opts.logger[type](...args);
   }
 };
 
-function _writeToFile(cacheObject, options) {
-  if (!options.useFile) {
+function _writeToFile(cacheObject, opts) {
+  if (!opts.useFile) {
     return Promise.resolve();
   }
 
   logger('log', 'Writing conman cache to file');
   return jsonfile
-    .writeFile(options.cacheFileName, cacheObject, {
+    .writeFile(opts.cacheFileName, cacheObject, {
       spaces: 2,
       EOL: '\r\n'
     })
     .then(res => {
       logger(
         'log',
-        `Succesfully wrote conman cache to file ${options.cacheFileName}`
+        `Succesfully wrote conman cache to file ${opts.cacheFileName}`
       );
       return res;
     })
     .catch(error => {
-      logger('error', `Couldn't write cache to file ${options.cacheFileName}`);
+      logger(
+        'error',
+        `Couldn't write cache to file ${opts.cacheFileName}`,
+        error
+      );
     });
 }
 
-function _isExpired(cache, options) {
-  return new Date().getTime() - cache.lastModified <= options.ttl;
+function _isExpired(cache, opts) {
+  return new Date().getTime() - cache.lastModified <= opts.ttl;
 }
 
-function _readFromFile(options) {
+function _readFromFile(opts) {
   return jsonfile
-    .readFile(options.cacheFileName)
+    .readFile(opts.cacheFileName)
     .then(cache => {
-      if (cache && cache.lastModified && _isExpired(cache, options)) {
-        logger(
-          'log',
-          `Succesfully read cache from file ${options.cacheFileName}`
-        );
+      if (cache && cache.lastModified && _isExpired(cache, opts)) {
+        logger('log', `Succesfully read cache from file ${opts.cacheFileName}`);
         return cache.data;
       }
       return null;
@@ -87,7 +87,7 @@ function _readFromFile(options) {
     .catch(err => {
       logger(
         'error',
-        `Could not read cache config file "${options.cacheFileName}"`,
+        `Could not read cache config file "${opts.cacheFileName}"`,
         err
       );
       return null;
@@ -109,6 +109,7 @@ function _triggerInterval() {
   if (options.ttl <= 0) {
     return;
   }
+
   ttlInterval = setInterval(build, options.ttl);
 }
 
@@ -130,12 +131,12 @@ function addSource(source) {
   return conman;
 }
 
-function _get(key, privateCache) {
+function _get(key, _privateCache) {
   if (key === undefined) {
-    return privateCache;
+    return _privateCache;
   }
 
-  return selector.query(privateCache, key);
+  return selector.query(_privateCache, key);
 }
 
 function get(keys) {
@@ -154,20 +155,19 @@ function getObfuscate(keys, params) {
   return obfuscate(get(keys), params);
 }
 
-function _buildSources(sources) {
-  const sourcesTypes = sources.map(({ name, type }) => name || type);
+function _buildSources(_sources) {
+  const sourcesTypes = _sources.map(({ name, type }) => name || type);
   logger(
     'log',
     `Build triggered for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
   );
-  return Promise.all(sources.map(source => source.build())).then(configs => {
+  return Promise.all(_sources.map(source => source.build())).then(configs => {
     logger(
       'log',
       `Build completed for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
     );
     return configs.reduce((acc, config) => {
-      acc = mergeDeepRight(acc, config);
-      return acc;
+      return mergeDeepRight(acc, config);
     }, {});
   });
 }
@@ -177,8 +177,8 @@ function _setPrivateCache(config) {
   return config;
 }
 
-function _buildAndSaveCache(sources) {
-  return _buildSources(sources).then(configs => {
+function _buildAndSaveCache(_sources) {
+  return _buildSources(_sources).then(configs => {
     return _writeToFile(_prepareCacheObject(configs), options).then(() =>
       _setPrivateCache(configs)
     );
@@ -215,7 +215,7 @@ function reset() {
   clearInterval(ttlInterval);
 }
 
-const conman = _init;
+conman = _init;
 conman.build = build;
 conman.stop = stop;
 conman.reset = reset;
