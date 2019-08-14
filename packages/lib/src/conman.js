@@ -34,7 +34,7 @@ let logger;
 function _prepareCacheObject(tree) {
   return {
     lastModified: new Date().getTime(),
-    data: tree,
+    data: tree
   };
 }
 
