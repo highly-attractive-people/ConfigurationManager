@@ -1,12 +1,10 @@
-'use strict';
+const http = require('http');
 
-const conman = require('./packages/lib/conman');
+const conman = require('./packages/lib/src/conman');
 const getconman = require('./getcoman');
-const nconfSource = require('./packages/sources/nconf');
-const memorySource = require('./packages/sources/memory');
-const s3Source = require('./packages/sources/s3');
-
-const colors = require('colors');
+const nconfSource = require('./packages/sources/nconf/src');
+const memorySource = require('./packages/sources/object/src');
+const s3Source = require('./packages/sources/s3/src');
 
 const firstMemory = memorySource(
   { name: 'mem1' },
@@ -40,32 +38,30 @@ let counter = 0;
 setInterval(() => {
   firstMemory
     .add({
-      fox_stag_ing: { encoders: { slce199_fxd1: 'JOSE-' + counter } }
+      fox_stag_ing: { encoders: { slce199_fxd1: `TEST ${counter}` } }
     })
     .add({
-      fox_stag_ing: { encoders: { slce199_fxd2: 'JOSE-' + counter } }
+      fox_stag_ing: { encoders: { slce199_fxd2: `TEST ${counter}` } }
     });
-  counter++;
+  counter += 1;
 }, 1000);
 
-conman({ ttl: 1000 * 15 })
-  // .addSource(nconfDefault)
+conman({ ttl: 1000 * 15, logEnabled: true })
+  .addSource(nconfDefault)
   .addSource(firstMemory)
   .addSource(secondMemory)
-  // .addSource(s3dev)
+  .addSource(s3dev)
   .build()
   .then(() => {
     setInterval(main, 3000);
-    let requestHandler = function(request, response) {
+    function requestHandler(request, response) {
       if (request.url === '/') {
         conman.build();
         response.end('👋 BYE');
       }
-    };
+    }
 
-    let server = http.createServer(requestHandler);
+    const server = http.createServer(requestHandler);
 
     server.listen(3001);
   });
-
-const http = require('http');

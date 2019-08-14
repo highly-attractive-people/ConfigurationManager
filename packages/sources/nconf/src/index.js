@@ -1,7 +1,6 @@
-'use strict';
-
 const nconf = require('nconf');
 const appRoot = require('app-root-path');
+
 const type = 'nconf';
 
 function source(userOptions) {
@@ -12,8 +11,7 @@ function source(userOptions) {
       .argv()
       .env({
         transform(obj) {
-          obj.value = obj.value.trim();
-          return obj;
+          return { ...obj, value: obj.value.trim() };
         }
       });
 

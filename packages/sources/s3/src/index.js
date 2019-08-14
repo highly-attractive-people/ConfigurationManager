@@ -1,8 +1,8 @@
 const AWS = require('aws-sdk');
 const { mergeAll } = require('ramda');
+
 const type = 's3';
 let s3;
-let params;
 
 function getAllFiles(params) {
   return s3

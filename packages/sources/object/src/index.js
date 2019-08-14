@@ -1,12 +1,12 @@
 const { mergeDeepRight } = require('ramda');
 
-const type = 'memory';
+const type = 'object';
 
-function source(userOptions, userConfig) {
+function source(userOptions, initialConfig) {
   let config = {};
   const { name } = userOptions;
 
-  config = mergeDeepRight(config, userConfig);
+  config = mergeDeepRight(config, initialConfig);
 
   function build() {
     return config;
