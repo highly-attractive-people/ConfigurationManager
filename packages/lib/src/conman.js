@@ -21,7 +21,7 @@ const defaultOptions = {
   logEnabled: false,
   logger: defaultLogger,
   useFile: true,
-  cacheFileName
+  cacheFileName,
 };
 
 let sources = [];

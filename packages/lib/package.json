@@ -15,6 +15,12 @@
     "access": "public"
   },
   "gitHead": "a1877d23a24042de10fa25296f519a3c681712f2",
+  "lint-staged": {
+    "src/**/*.*": [
+      "prettier --write",
+      "git add"
+    ]
+  },
   "dependencies": {
     "app-root-path": "^2.2.1",
     "jsonfile": "^5.0.0"
@@ -48,11 +54,5 @@
         }
       ]
     }
-  },
-  "lint-staged": {
-    "src/**/*.*": [
-      "prettier --write",
-      "git add"
-    ]
   }
 }
