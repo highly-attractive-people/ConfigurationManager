@@ -4,6 +4,7 @@ const appRoot = require('app-root-path');
 
 const nodeSelector = require('./helpers/nodeSelector');
 const obfuscate = require('./helpers/obfuscate');
+const serialize = require('./helpers/serialize');
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -43,6 +44,9 @@ const _log = opts => (type, ...args) => {
   }
 };
 
+// _serialPromises(() => {
+
+// })
 function _writeToFile(cacheObject, opts) {
   if (!opts.useFile) {
     return Promise.resolve();
@@ -156,25 +160,16 @@ function getObfuscate(keys, params) {
 }
 
 function _buildSources(_sources) {
-  const sourcesTypes = _sources.map(({ name, type }) => name || type);
-  const sourcesKeys = _sources.map(source => source.key);
-  logger(
-    'log',
-    `Build triggered for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
-  );
-  return Promise.all(_sources.map(source => source.build())).then(configs => {
-    logger(
-      'log',
-      `Build completed for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
-    );
-    return configs.reduce((acc, config, index) => {
-      const sourceKey = sourcesKeys[index];
-      if (sourceKey) {
-        return mergeDeepRight(acc, { [sourceKey]: config });
-      }
-      return mergeDeepRight(acc, config);
-    }, {});
-  });
+  async function buildSource(config, source) {
+    const sourceConfig = await source.build(config);
+    const parseConfig = source.key
+      ? { [source.key]: sourceConfig }
+      : sourceConfig;
+
+    return mergeDeepRight(config, parseConfig);
+  }
+
+  return serialize(_sources, buildSource, {});
 }
 
 function _setPrivateCache(config) {
@@ -182,25 +177,31 @@ function _setPrivateCache(config) {
   return config;
 }
 
-function _buildAndSaveCache(_sources) {
-  return _buildSources(_sources).then(configs => {
-    return _writeToFile(_prepareCacheObject(configs), options).then(() =>
-      _setPrivateCache(configs)
-    );
-  });
+async function _buildAndSaveCache(_sources) {
+  const sourcesTypes = _sources.map(({ name, type }) => name || type);
+  logger(
+    'log',
+    `Build triggered for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
+  );
+  const configs = await _buildSources(_sources);
+  logger(
+    'log',
+    `Build completed for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
+  );
+  await _writeToFile(_prepareCacheObject(configs), options);
+  return _setPrivateCache(configs);
 }
 
-function build() {
+async function build() {
   _triggerInterval();
 
   // read from file if its the first build
   if (!privateCache && options.useFile) {
-    return _readFromFile(options).then(cache => {
-      if (!cache) {
-        return _buildAndSaveCache(sources);
-      }
-      return _setPrivateCache(cache);
-    });
+    const cache = await _readFromFile(options);
+    if (!cache) {
+      return _buildAndSaveCache(sources);
+    }
+    return _setPrivateCache(cache);
   }
 
   return _buildAndSaveCache(sources);

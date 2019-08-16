@@ -9,7 +9,6 @@ Conman is a plugabble configuration management library.
 - **Refreshable**: Based on a TTL, the config rebuilds in the background, or you can trigger a rebuild manually at any point in time.
 
 ## Getting Started
-
 ```js
 // Require conman
 const conman = require('@jepz20/conman');
@@ -193,20 +192,24 @@ A source can be as simple as an object that contains a `build` and `type` proper
 
 #### Source interface
 
-- **build(mandatory)**: a function that returns an object or a promise that returns an object
+- **build(mandatory)**: a function that returns an object or a promise that returns an object. The build method receives the config built from the sources until that point.
 - **type(mandatory)**: a string which identifies the type of source
 - **name(optional)**: in case you want to identify each instance of your source you can include a name. If a name exists it would be used instead of the `type`
 
 #### Example
 
 ```js
-const source = (obj, params) => {
+const source = (obj, { key, name } = {}) => {
   return {
-    build() {
+    build(config) { // recieves the config up until that point
+      if (config.extra) {
+        return { ...obj, extra: config.extra };
+      }
       return obj;
     },
     type: 'syncSource',
-    name: params.name
+    key,
+    name
   };
 };
 ```

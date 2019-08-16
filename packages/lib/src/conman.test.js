@@ -3,9 +3,12 @@ const jsonfile = require('jsonfile');
 
 const conman = require('./conman');
 
-const source = (obj, { key, name } = {}) => {
+const source = (obj = {}, { key, name } = {}) => {
   return {
-    build() {
+    build(config) {
+      if (config.extra) {
+        return { ...obj, extra: config.extra };
+      }
       return obj;
     },
     type: 'syncSource',
@@ -14,12 +17,17 @@ const source = (obj, { key, name } = {}) => {
   };
 };
 
-const asyncSource = obj => {
+const asyncSource = (obj = {}, { key, name } = {}) => {
   return {
-    build() {
+    build(config) {
+      if (config.extra) {
+        return Promise.resolve({ ...obj, extra: config.extra });
+      }
       return Promise.resolve(obj);
     },
-    type: 'asyncSource'
+    type: 'asyncSource',
+    key,
+    name
   };
 };
 
@@ -56,6 +64,28 @@ describe('conman library', () => {
       .build();
     conman.stop();
     expect(config).toEqual({ TEST: { test: 'test' } });
+  });
+
+  it('should build with one synchronous source and pass the configf', async () => {
+    const source1 = source({ test: 'test', extra: 'extra config' });
+    const source2 = source({ test: 'usesConfig' });
+    const config = await conman()
+      .addSource(source1)
+      .addSource(source2)
+      .build();
+    conman.stop();
+    expect(config).toEqual({ test: 'usesConfig', extra: 'extra config' });
+  });
+
+  it('should build with one asynchronous source and pass the configf', async () => {
+    const source1 = asyncSource({ test: 'test', extra: 'extra config async' });
+    const source2 = asyncSource({ test: 'usesConfig' });
+    const config = await conman()
+      .addSource(source1)
+      .addSource(source2)
+      .build();
+    conman.stop();
+    expect(config).toEqual({ test: 'usesConfig', extra: 'extra config async' });
   });
 
   it('should build with one synchronous source', async () => {
