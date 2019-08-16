@@ -26,7 +26,7 @@ function getFile(params) {
     });
 }
 
-function source(userOptions) {
+function source(userOptions = {}) {
   s3 = new AWS.S3();
   const { Bucket, Key, name, ...options } = userOptions;
   AWS.config.update(options);

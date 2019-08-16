@@ -3,7 +3,7 @@ const appRoot = require('app-root-path');
 
 const type = 'nconf';
 
-function source(userOptions) {
+function source(userOptions = {}) {
   const { name } = userOptions;
   function build() {
     nconf

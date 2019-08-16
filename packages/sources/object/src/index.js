@@ -2,7 +2,7 @@ const { mergeDeepRight } = require('ramda');
 
 const type = 'object';
 
-function source(userOptions, initialConfig) {
+function source(userOptions = {}, initialConfig = {}) {
   let config = {};
   const { name } = userOptions;
 
