@@ -157,6 +157,7 @@ function getObfuscate(keys, params) {
 
 function _buildSources(_sources) {
   const sourcesTypes = _sources.map(({ name, type }) => name || type);
+  const sourcesKeys = _sources.map(source => source.key);
   logger(
     'log',
     `Build triggered for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
@@ -166,7 +167,11 @@ function _buildSources(_sources) {
       'log',
       `Build completed for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
     );
-    return configs.reduce((acc, config) => {
+    return configs.reduce((acc, config, index) => {
+      const sourceKey = sourcesKeys[index];
+      if (sourceKey) {
+        return mergeDeepRight(acc, { [sourceKey]: config });
+      }
       return mergeDeepRight(acc, config);
     }, {});
   });

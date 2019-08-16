@@ -26,10 +26,11 @@ function getFile(params) {
     });
 }
 
-function source(userOptions = {}) {
+function source(userOptions, awsParams = {}) {
   s3 = new AWS.S3();
-  const { Bucket, Key, name, ...options } = userOptions;
-  AWS.config.update(options);
+  const { name, key } = userOptions;
+  const { Bucket, Key, ...userParams } = awsParams;
+  AWS.config.update(userParams);
   if (!Bucket) {
     throw new Error('Calling s3 source with null or undefined Bucket');
   }
@@ -45,7 +46,8 @@ function source(userOptions = {}) {
   return {
     build,
     type,
-    name
+    name,
+    key
   };
 }
 

@@ -3,53 +3,56 @@ const http = require('http');
 const conman = require('./packages/lib/src/conman');
 const getconman = require('./getcoman');
 const nconfSource = require('./packages/sources/nconf/src');
-const memorySource = require('./packages/sources/object/src');
+const objectSource = require('./packages/sources/object/src');
 const s3Source = require('./packages/sources/s3/src');
 
-const firstMemory = memorySource(
+const firstObj = objectSource(
   { name: 'mem1' },
   {
-    fox_stag_ing: { encoders: { slce199_fxd1: 'JOSE' } }
+    fox_staging: { encoders: { slce199_fxd1: 'JOSE' } }
   }
 );
-const secondMemory = memorySource(
-  { name: 'mem2' },
+const secondObj = objectSource(
+  { name: 'mem2', key: 'CHANNEL_GROUPS' },
   {
-    fox_stag_ing: { encoders: { slce199_fxd1: 'YENY' } }
+    fox_staging: { encoders: { slce199_fxd1: 'YENY' } }
   }
 );
-const s3dev = s3Source({
-  Bucket: 'dcg-video-live-encoder-service-dev',
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_DEFAULT_REGION,
-  sessionToken: process.env.AWS_SESSION_TOKEN,
-  name: 's3dev'
-});
+const s3dev = s3Source(
+  {
+    name: 's3dev',
+    key: 'CHANNEL_GROUPS'
+  },
+  {
+    Bucket: 'dcg-video-live-encoder-service-dev',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_DEFAULT_REGION,
+    sessionToken: process.env.AWS_SESSION_TOKEN
+  }
+);
 
 const nconfDefault = nconfSource({ name: 'defaultNconf' });
 
 function main() {
-  console.log(
-    JSON.stringify(getconman(['fox_stag_ing.encoders', undefined]), null, 4)
-  );
+  console.log(JSON.stringify(getconman(), null, 4));
 }
 let counter = 0;
 setInterval(() => {
-  firstMemory
+  firstObj
     .add({
-      fox_stag_ing: { encoders: { slce199_fxd1: `TEST ${counter}` } }
+      fox_staging: { encoders: { slce199_fxd1: `TEST ${counter}` } }
     })
     .add({
-      fox_stag_ing: { encoders: { slce199_fxd2: `TEST ${counter}` } }
+      fox_staging: { encoders: { slce199_fxd2: `TEST ${counter}` } }
     });
   counter += 1;
 }, 1000);
 
 conman({ ttl: 1000 * 15, logEnabled: true })
   .addSource(nconfDefault)
-  .addSource(firstMemory)
-  .addSource(secondMemory)
+  .addSource(firstObj)
+  .addSource(secondObj)
   .addSource(s3dev)
   .build()
   .then(() => {

@@ -4,7 +4,7 @@ const appRoot = require('app-root-path');
 const type = 'nconf';
 
 function source(userOptions = {}) {
-  const { name } = userOptions;
+  const { name, key } = userOptions;
   function build() {
     nconf
       .use('memory')
@@ -33,7 +33,8 @@ function source(userOptions = {}) {
   return {
     build,
     type,
-    name
+    name,
+    key
   };
 }
 

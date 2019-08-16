@@ -3,12 +3,14 @@ const jsonfile = require('jsonfile');
 
 const conman = require('./conman');
 
-const source = obj => {
+const source = (obj, { key, name } = {}) => {
   return {
     build() {
       return obj;
     },
-    type: 'syncSource'
+    type: 'syncSource',
+    key,
+    name
   };
 };
 
@@ -38,7 +40,7 @@ describe('conman library', () => {
     expect(config).toEqual({});
   });
 
-  it('should build with one synchronous source', async () => {
+  it('should build with one asynchronous source', async () => {
     const source1 = asyncSource({ test: 'test' });
     const config = await conman()
       .addSource(source1)
@@ -47,7 +49,16 @@ describe('conman library', () => {
     expect(config).toEqual({ test: 'test' });
   });
 
-  it('should build with one asynchronous source', async () => {
+  it('should build with one synchronous source and use the key', async () => {
+    const source1 = source({ test: 'test' }, { key: 'TEST' });
+    const config = await conman()
+      .addSource(source1)
+      .build();
+    conman.stop();
+    expect(config).toEqual({ TEST: { test: 'test' } });
+  });
+
+  it('should build with one synchronous source', async () => {
     const source1 = source({ test: 'test async' });
     const config = await conman()
       .addSource(source1)

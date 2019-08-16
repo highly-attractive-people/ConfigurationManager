@@ -4,7 +4,7 @@ const type = 'object';
 
 function source(userOptions = {}, initialConfig = {}) {
   let config = {};
-  const { name } = userOptions;
+  const { name, key } = userOptions;
 
   config = mergeDeepRight(config, initialConfig);
 
@@ -20,7 +20,8 @@ function source(userOptions = {}, initialConfig = {}) {
     build,
     type,
     add,
-    name
+    name,
+    key
   };
 }
 

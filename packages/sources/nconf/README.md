@@ -10,6 +10,13 @@ Uses nconf to import:
    - `${__dirname}/../defaults/${appEnv}.env.json`
    - `${__dirname}/../defaults/default.env.json`
 
+
+## Options
+| Options       | Description                                                                    | Type    | Default                         |
+| ------------- | ------------------------------------------------------------------------------ | ------- | ------------------------------- |
+| name           | name of the source to be used instead of the type | string  | |
+| key    |  key where the source data will be included inside the config| string, if no key is provided data is at the root of the config | |
+
 ## Use example:
 
 ```js
