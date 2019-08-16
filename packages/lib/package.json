@@ -1,6 +1,6 @@
 {
   "name": "@jepz20/conman",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Configuration manager that supports ttl and plugabble sources",
   "main": "./src/conman",
   "scripts": {
