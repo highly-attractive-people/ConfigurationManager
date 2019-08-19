@@ -18,7 +18,7 @@ const defaultOptions = {
   logEnabled: false,
   logger: defaultLogger,
   useFile: true,
-  defaultCacheFileName
+  cacheFileName: defaultCacheFileName
 };
 
 const _log = opts => (type, ...args) => {

@@ -1,6 +1,6 @@
 {
   "name": "@jepz20/conman-nconf-source",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "nconf for conman configuration manager",
   "main": "src/index.js",
   "scripts": {
