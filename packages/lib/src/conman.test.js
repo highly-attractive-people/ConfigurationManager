@@ -1,7 +1,7 @@
 jest.mock('jsonfile');
 const jsonfile = require('jsonfile');
 
-const Conman = require('./conman');
+const conman = require('./conman');
 
 const source = (obj = {}, { key, name } = {}) => {
   return {
@@ -49,80 +49,80 @@ describe('conman library', () => {
   });
 
   it('should work with default options and no sources', async () => {
-    const conman = Conman();
-    const config = await conman.build();
-    conman.stop();
-    expect(config).toEqual({});
+    const config = conman();
+    const data = await config.build();
+    config.stop();
+    expect(data).toEqual({});
   });
 
   it('should build with one asynchronous source', async () => {
     const source1 = asyncSource({ test: 'test' });
-    const conman = Conman();
-    const config = await conman.addSource(source1).build();
-    conman.stop();
-    expect(config).toEqual({ test: 'test' });
+    const config = conman();
+    const data = await config.addSource(source1).build();
+    config.stop();
+    expect(data).toEqual({ test: 'test' });
   });
 
   it('should build with one synchronous source and use the key', async () => {
     const source1 = source({ test: 'test' }, { key: 'TEST' });
-    const conman = Conman();
-    const config = await conman.addSource(source1).build();
-    conman.stop();
-    expect(config).toEqual({ TEST: { test: 'test' } });
+    const config = conman();
+    const data = await config.addSource(source1).build();
+    config.stop();
+    expect(data).toEqual({ TEST: { test: 'test' } });
   });
 
   it('should build with one synchronous source and pass the configf', async () => {
     const source1 = source({ test: 'test', extra: 'extra config' });
     const source2 = source({ test: 'usesConfig' });
-    const conman = Conman();
-    const config = await conman
+    const config = conman();
+    const data = await config
       .addSource(source1)
       .addSource(source2)
       .build();
-    conman.stop();
-    expect(config).toEqual({ test: 'usesConfig', extra: 'extra config' });
+    config.stop();
+    expect(data).toEqual({ test: 'usesConfig', extra: 'extra config' });
   });
 
   it('should build with one asynchronous source and pass the configf', async () => {
     const source1 = asyncSource({ test: 'test', extra: 'extra config async' });
     const source2 = asyncSource({ test: 'usesConfig' });
-    const conman = Conman();
-    const config = await conman
+    const config = conman();
+    const data = await config
       .addSource(source1)
       .addSource(source2)
       .build();
-    conman.stop();
-    expect(config).toEqual({ test: 'usesConfig', extra: 'extra config async' });
+    config.stop();
+    expect(data).toEqual({ test: 'usesConfig', extra: 'extra config async' });
   });
 
   it('should build with one synchronous source', async () => {
     const source1 = source({ test: 'test async' });
-    const conman = Conman();
-    const config = await conman.addSource(source1).build();
-    conman.stop();
-    expect(config).toEqual({ test: 'test async' });
+    const config = conman();
+    const data = await config.addSource(source1).build();
+    config.stop();
+    expect(data).toEqual({ test: 'test async' });
   });
 
   it('should build with more than one source in order', async () => {
     const source1 = asyncSource({ test: 'test async', test2: 'test2' });
     const source2 = source({ test: 'test', test3: 'test3' });
-    const conman = Conman();
-    const config = await conman
+    const config = conman();
+    const data = await config
       .addSource(source1)
       .addSource(source2)
       .build();
-    conman.stop();
-    expect(config).toEqual({ test: 'test', test2: 'test2', test3: 'test3' });
+    config.stop();
+    expect(data).toEqual({ test: 'test', test2: 'test2', test3: 'test3' });
     expect(jsonfile.writeFile).toHaveBeenCalledTimes(1);
     expect(jsonfile.readFile).toHaveBeenCalledTimes(1);
   });
 
   it('should get one key from the config', async () => {
     const source1 = source({ test: 'test async' });
-    const conman = Conman();
-    await conman.addSource(source1).build();
-    conman.stop();
-    expect(conman.get('test')).toBe('test async');
+    const config = conman();
+    await config.addSource(source1).build();
+    config.stop();
+    expect(config.get('test')).toBe('test async');
   });
 
   it('should get all the keys in the array from the config', async () => {
@@ -131,10 +131,10 @@ describe('conman library', () => {
       test2: 'test2',
       test3: 'test3'
     });
-    const conman = Conman();
-    await conman.addSource(source1).build();
-    conman.stop();
-    expect(conman.get(['test', 'test2'])).toEqual(['test async', 'test2']);
+    const config = conman();
+    await config.addSource(source1).build();
+    config.stop();
+    expect(config.get(['test', 'test2'])).toEqual(['test async', 'test2']);
   });
 
   it('should get a deep nested key from the config', async () => {
@@ -145,10 +145,10 @@ describe('conman library', () => {
         }
       }
     });
-    const conman = Conman();
-    await conman.addSource(source1).build();
-    conman.stop();
-    expect(conman.get('test.test2.test3')).toBe('test3');
+    const config = conman();
+    await config.addSource(source1).build();
+    config.stop();
+    expect(config.get('test.test2.test3')).toBe('test3');
   });
 
   it('should get obfuscated value from the config', async () => {
@@ -163,17 +163,17 @@ describe('conman library', () => {
       testBoolean: true,
       testArr: ['arr1', 'arr2']
     });
-    const conman = Conman();
-    await conman.addSource(source1).build();
-    conman.stop();
-    expect(conman.getObfuscate('test')).toBe('te**');
-    expect(conman.getObfuscate('testUndefined')).toBe(undefined);
-    expect(conman.getObfuscate('testNull')).toBe(null);
-    expect(conman.getObfuscate('testNumber')).toBe('12**');
-    expect(conman.getObfuscate('testBoolean')).toBe('tr**');
-    expect(conman.getObfuscate('testObj')).toEqual({ 'va***': 'v**' });
-    expect(conman.getObfuscate('testArr')).toEqual(['ar**', 'ar**']);
-    expect(conman.getObfuscate(['testObj', 'test'])).toEqual([
+    const config = conman();
+    await config.addSource(source1).build();
+    config.stop();
+    expect(config.getObfuscate('test')).toBe('te**');
+    expect(config.getObfuscate('testUndefined')).toBe(undefined);
+    expect(config.getObfuscate('testNull')).toBe(null);
+    expect(config.getObfuscate('testNumber')).toBe('12**');
+    expect(config.getObfuscate('testBoolean')).toBe('tr**');
+    expect(config.getObfuscate('testObj')).toEqual({ 'va***': 'v**' });
+    expect(config.getObfuscate('testArr')).toEqual(['ar**', 'ar**']);
+    expect(config.getObfuscate(['testObj', 'test'])).toEqual([
       { 'va***': 'v**' },
       'te**'
     ]);
@@ -187,11 +187,11 @@ describe('conman library', () => {
       },
       testArr: ['arr-1', 'a-rr2']
     });
-    const conman = Conman();
-    await conman.addSource(source1).build();
-    conman.stop();
+    const config = conman();
+    await config.addSource(source1).build();
+    config.stop();
     expect(
-      conman.getObfuscate('test', { position: 'start', separator: '-' })
+      config.getObfuscate('test', { position: 'start', separator: '-' })
     ).toBe('***st');
   });
 
@@ -203,28 +203,28 @@ describe('conman library', () => {
         }
       }
     });
-    const conman = Conman();
-    await conman.addSource(source1).build();
-    conman.stop();
-    expect(conman.get('test.test2.test4')).toBe(undefined);
+    const config = conman();
+    await config.addSource(source1).build();
+    config.stop();
+    expect(config.get('test.test2.test4')).toBe(undefined);
   });
 
   it('should get the complete config if no key is provided', async () => {
     const source1 = source({ test: 'test async', test2: 'test2' });
-    const conman = Conman();
-    await conman.addSource(source1).build();
-    conman.stop();
-    expect(conman.get()).toEqual({ test: 'test async', test2: 'test2' });
+    const config = conman();
+    await config.addSource(source1).build();
+    config.stop();
+    expect(config.get()).toEqual({ test: 'test async', test2: 'test2' });
   });
 
   it('should rebuild when time expires', async () => {
     const source1 = source({ test: 'test', test3: 'test3' });
     jest.spyOn(source1, 'build');
-    const conman = Conman({ ttl: 1000 });
-    await conman.addSource(source1).build();
+    const config = conman({ ttl: 1000 });
+    await config.addSource(source1).build();
 
     await new Promise(r => setTimeout(r, 3000));
-    conman.stop();
+    config.stop();
     expect(source1.build).toHaveBeenCalledTimes(3);
   });
 
@@ -238,8 +238,8 @@ describe('conman library', () => {
 
     const source1 = source({ test: 'test', test3: 'test3' });
     jest.spyOn(source1, 'build');
-    const conman = Conman(options);
-    await conman.addSource(source1).build();
+    const config = conman(options);
+    await config.addSource(source1).build();
     expect(options.logger.log).toHaveBeenCalled();
     expect(jsonfile.writeFile).toHaveBeenCalledTimes(0);
     expect(jsonfile.readFile).toHaveBeenCalledTimes(0);
@@ -254,10 +254,10 @@ describe('conman library', () => {
         test: 'readfromfile'
       }
     });
-    const conman = Conman();
-    const config = await conman.addSource(source1).build();
-    conman.stop();
-    expect(config).toEqual({
+    const config = conman();
+    const data = await config.addSource(source1).build();
+    config.stop();
+    expect(data).toEqual({
       test: 'readfromfile'
     });
   });
@@ -270,10 +270,10 @@ describe('conman library', () => {
         test: 'readfromfile'
       }
     });
-    const conman = Conman();
-    const config = await conman.addSource(source1).build();
-    conman.stop();
-    expect(config).toEqual({
+    const config = conman();
+    const data = await config.addSource(source1).build();
+    config.stop();
+    expect(data).toEqual({
       test: 'builtfromsource'
     });
   });
@@ -281,13 +281,13 @@ describe('conman library', () => {
   it('should build even if failed to read file and logs an error', async () => {
     const source1 = source({ test: 'builtfromsource' });
     jsonfile.readFile.mockRejectedValueOnce();
-    const conman = Conman({
+    const config = conman({
       logEnabled: true,
       logger
     });
-    const config = await conman.addSource(source1).build();
-    conman.stop();
-    expect(config).toEqual({
+    const data = await config.addSource(source1).build();
+    config.stop();
+    expect(data).toEqual({
       test: 'builtfromsource'
     });
     expect(logger.error).toHaveBeenCalledTimes(1);
@@ -296,48 +296,44 @@ describe('conman library', () => {
   it('should build even if failed to write file and logs an error', async () => {
     const source1 = source({ test: 'test', test3: 'test3' });
     jsonfile.writeFile.mockRejectedValueOnce();
-    const conman = Conman({
+    const config = conman({
       logEnabled: true,
       logger
     });
-    const config = await conman.addSource(source1).build();
-    conman.stop();
-    expect(config).toEqual({ test: 'test', test3: 'test3' });
+    const data = await config.addSource(source1).build();
+    config.stop();
+    expect(data).toEqual({ test: 'test', test3: 'test3' });
     expect(logger.error).toHaveBeenCalledTimes(1);
   });
 
   it(`should create independent instances with the provider`, async () => {
-    const instance1 = Conman({ ttl: 0 });
-    const instance2 = Conman({ ttl: 0 });
+    const conman1 = conman({ ttl: 0 });
+    const conman2 = conman({ ttl: 0 });
 
-    await instance1
-      .addSource(source({ test: 'instance1' }))
-      .build();
-    await instance2
-      .addSource(source({ test: 'instance2' }))
-      .build();
+    await conman1.addSource(source({ test: 'conman1' })).build();
+    await conman2.addSource(source({ test: 'conman2' })).build();
 
-    expect(instance1.get()).toEqual({ test: 'instance1' });
-    expect(instance2.get()).toEqual({ test: 'instance2' });
+    expect(conman1.get()).toEqual({ test: 'conman1' });
+    expect(conman2.get()).toEqual({ test: 'conman2' });
 
-    instance1.reset();
-    expect(instance1.get()).toEqual({});
-    expect(instance2.get()).toEqual({ test: 'instance2' });
+    conman1.reset();
+    expect(conman1.get()).toEqual({});
+    expect(conman2.get()).toEqual({ test: 'conman2' });
   });
 
   it('should throw an error if the source is missing its build property', async () => {
-    expect(() => Conman().addSource({ type: 'source' })).toThrow();
+    expect(() => conman().addSource({ type: 'source' })).toThrow();
   });
 
   it(`should throw an error if the source's build is not a function`, async () => {
     expect(() =>
-      Conman().addSource({ type: 'source', build: 'not a function' })
+      conman().addSource({ type: 'source', build: 'not a function' })
     ).toThrow();
   });
 
   it(`should throw an error if the source is missing its type`, async () => {
     expect(() =>
-      Conman().addSource({
+      conman().addSource({
         build() {
           return {};
         }

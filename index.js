@@ -1,7 +1,6 @@
 const http = require('http');
 
 const conman = require('./packages/lib/src/conman');
-const getconman = require('./getcoman');
 const nconfSource = require('./packages/sources/nconf/src');
 const objectSource = require('./packages/sources/object/src');
 const s3Source = require('./packages/sources/s3/src');
@@ -34,8 +33,8 @@ const s3dev = s3Source(
 
 const nconfDefault = nconfSource({ name: 'defaultNconf' });
 
-function main() {
-  console.log(JSON.stringify(getconman(), null, 4));
+function main(config) {
+  console.log(JSON.stringify(config.get(), null, 4));
 }
 let counter = 0;
 setInterval(() => {
@@ -49,22 +48,22 @@ setInterval(() => {
   counter += 1;
 }, 1000);
 
-conman({ ttl: 1000 * 15, logEnabled: true })
+const config = conman({ ttl: 1000 * 15, logEnabled: true })
   .addSource(nconfDefault)
   .addSource(firstObj)
   .addSource(secondObj)
-  .addSource(s3dev)
-  .build()
-  .then(() => {
-    setInterval(main, 3000);
-    function requestHandler(request, response) {
-      if (request.url === '/') {
-        conman.build();
-        response.end('👋 BYE');
-      }
+  .addSource(s3dev);
+
+config.build().then(() => {
+  setInterval(() => main(config), 3000);
+  function requestHandler(request, response) {
+    if (request.url === '/') {
+      config.build();
+      response.end('👋 BYE');
     }
+  }
 
-    const server = http.createServer(requestHandler);
+  const server = http.createServer(requestHandler);
 
-    server.listen(3001);
-  });
+  server.listen(3001);
+});
