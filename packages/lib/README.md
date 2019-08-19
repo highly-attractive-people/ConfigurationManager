@@ -11,7 +11,7 @@ Conman is a plugabble configuration management library.
 ## Getting Started
 ```js
 // Require conman
-const conman = require('@jepz20/conman');
+const Conman = require('@jepz20/conman');
 
 // Require the sources you will need in your config
 const s3 = require('@jepz20/conman-s3-source');
@@ -21,7 +21,8 @@ const memory = require('@jepz20/conman-memory-source');
 const s3Source = s3({ Bucket: 'Your Bucker' });
 const memorySource = memory({ key: 'value' });
 
-conman({ ttl: 1000 * 60 * 15 }) // initialize conman with your options
+const conman = Conman({ ttl: 1000 * 60 * 15 }) // Create a new instance and initialize conman with your options
+conman
   .addSource(s3Source) // add all the sources you need by priority
   .addSource(memorySource) // if a key exists in s3Source and memorySource, memorySource will take precedence
   .build() // returns a promise that re$solves when the build process is completed
@@ -185,6 +186,8 @@ const key = conman.getObfuscated('my.precious');
 const key = conman.getObfuscated('another', { separator: '-' });
 // returns "*******-value"
 ```
+
+## Integrating Conman with ExpressJS
 
 ## Creating your own source
 
