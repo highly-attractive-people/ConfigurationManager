@@ -1,6 +1,6 @@
 {
   "name": "@jepz20/conman-object-source",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "object source for conman configuration manager",
   "main": "src/index.js",
   "scripts": {

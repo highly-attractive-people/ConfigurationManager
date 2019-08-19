@@ -128,7 +128,7 @@ function conman(userOptions) {
   }
 
   function _get(key, _privateCache) {
-    const safeCache = _privateCache || {};
+    const safeCache = _privateCache || {}
     if (key === undefined) {
       return safeCache;
     }
@@ -219,4 +219,4 @@ function conman(userOptions) {
   };
 }
 
-module.exports = { create: conman };
+module.exports = conman;
