@@ -1,5 +1,5 @@
 {
-  "name": "@jepz20/conman",
+  "name": "@highly-attractive-people/conman",
   "version": "0.0.13",
   "description": "Configuration manager that supports ttl and plugabble sources",
   "main": "./src/conman",
