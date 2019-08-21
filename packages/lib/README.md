@@ -11,11 +11,11 @@ Conman is a plugabble configuration management library.
 ## Getting Started
 ```js
 // Require conman
-const Conman = require('@jepz20/conman');
+const Conman = require('@highly-attractive-people/conman');
 
 // Require the sources you will need in your config
-const s3 = require('@jepz20/conman-s3-source');
-const memory = require('@jepz20/conman-memory-source');
+const s3 = require('@highly-attractive-people/conman-s3-source');
+const memory = require('@highly-attractive-people/conman-memory-source');
 
 // if your source requires it initialize it
 const s3Source = s3({ Bucket: 'Your Bucker' });

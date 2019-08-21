@@ -20,7 +20,7 @@ If the Key is missing it will grab and combine all the files from the Bucket.
 ## Use example:
 
 ```js
-const conman = require('@jepz20/conman');
+const conman = require('@highly-attractive-people/conman');
 const s3 = s3Source(
   { name: 's3Source', key: 's3' },
   {

@@ -1,5 +1,5 @@
 {
-  "name": "@jepz20/conman-s3-source",
+  "name": "@highly-attractive-people/conman-s3-source",
   "version": "0.0.13",
   "description": "s3 for conman configuration manager",
   "main": "src/index.js",

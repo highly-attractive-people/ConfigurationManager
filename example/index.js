@@ -1,9 +1,9 @@
 const http = require('http');
 
-const conman = require('./packages/lib/src/conman');
-const nconfSource = require('./packages/sources/nconf/src');
-const objectSource = require('./packages/sources/object/src');
-const s3Source = require('./packages/sources/s3/src');
+const conman = require('../packages/lib/src/conman');
+const nconfSource = require('../packages/sources/nconf/src');
+const objectSource = require('../packages/sources/object/src');
+const s3Source = require('../packages/sources/s3/src');
 
 const firstObj = objectSource(
   { name: 'mem1' },
@@ -36,6 +36,7 @@ const nconfDefault = nconfSource({ name: 'defaultNconf' });
 function main(config) {
   console.log(JSON.stringify(config.get(), null, 4));
 }
+
 let counter = 0;
 setInterval(() => {
   firstObj

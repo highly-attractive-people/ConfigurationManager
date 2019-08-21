@@ -20,8 +20,8 @@ Uses nconf to import:
 ## Use example:
 
 ```js
-const conman = require('@jepz20/conman');
-const nconfSource = require('@jepz20/conman-nconf-source');
+const conman = require('@highly-attractive-people/conman');
+const nconfSource = require('@highly-attractive-people/conman-nconf-source');
 
 const nconf = nconfSource({ name: 'defaultNconf' }); // you can assign a name
 

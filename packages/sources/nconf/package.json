@@ -1,5 +1,5 @@
 {
-  "name": "@jepz20/conman-nconf-source",
+  "name": "@highly-attractive-people/conman-nconf-source",
   "version": "0.0.13",
   "description": "nconf for conman configuration manager",
   "main": "src/index.js",
