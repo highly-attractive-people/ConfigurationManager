@@ -1,10 +1,6 @@
 .idea
-.env
 .vscode
 .nyc_output
-/coverage
-/docs
-junit.xml
+coverage
 node_modules
-conman.cache.json
 yarn-error.log

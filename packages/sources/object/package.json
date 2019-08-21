@@ -1,18 +1,29 @@
 {
-  "name": "conmanpackages",
-  "version": "1.0.0",
-  "description": "Conman packages",
+  "name": "@highly-attractive-people/conman-object-source",
+  "version": "0.0.13",
+  "description": "object source for conman configuration manager",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "precommit": "lint-staged",
+    "lint": "node_modules/.bin/eslint \"**/*.js\" --ignore-path .eslintignore"
+  },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "lerna": "^3.16.4"
+  "publishConfig": {
+    "access": "public"
   },
+  "gitHead": "a1877d23a24042de10fa25296f519a3c681712f2",
   "lint-staged": {
-    "packages/**/*.*": [
+    "src/**/*.*": [
       "yarn lint",
       "prettier --write",
       "git add"
     ]
+  },
+  "dependencies": {
+    "ramda": "^0.26.1"
   },
   "devDependencies": {
     "eslint": "^6.1.0",
