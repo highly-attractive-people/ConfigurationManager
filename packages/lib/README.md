@@ -63,7 +63,8 @@ conman
 
 ### build
 
-`conman.build()` builds the configuration object by calling the `build` function from all the added sources and returns promise the resolves when the build is completed and schedules a new build base on the `ttl` option. If `ttl` is `0` a new built is NOT schedule.
+`conman.build()`
+Build the sources added by the `addSource` method in order from all the added sources and returns promise the resolves when the build is completed and schedules a new build base on the `ttl` option. If `ttl` is `0` a new built is NOT schedule.
 
 If `useFile` option is true, it will try to read a cache file and write the new config to the cache file.
 The cache file has the following format:
@@ -134,14 +135,6 @@ const key = conman.get();
   */
 ```
 
-### stop
-
-`conman.stop()` stops the rebuilt interval schedule base on the TTL
-
-### reset
-
-`conman.reset()` clears all the sources, the configuration cache and resets all defaults options
-
 ### getObfuscate
 
 `conman.getObfuscate(key, options)` behaves exactly as `conman.get` but returns an obfuscated version of the value.
@@ -187,7 +180,13 @@ const key = conman.getObfuscated('another', { separator: '-' });
 // returns "*******-value"
 ```
 
-## Integrating Conman with ExpressJS
+### stop
+
+`conman.stop()` stops the rebuilt interval schedule base on the TTL
+
+### reset
+
+`conman.reset()` clears all the sources, the configuration cache and resets all defaults options
 
 ## Creating your own source
 
