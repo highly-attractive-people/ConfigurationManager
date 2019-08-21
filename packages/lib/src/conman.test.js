@@ -246,6 +246,30 @@ describe('conman library', () => {
     expect(source1.build).toHaveBeenCalledTimes(1);
   });
 
+  it('should use logger info if no logger log is provided', async () => {
+    const customLogger = {
+      info: jest.fn(),
+      error: jest.fn()
+    };
+
+    const options = {
+      logger: customLogger,
+      logEnabled: true,
+      useFile: false,
+      ttl: 0
+    };
+
+    const source1 = source({ test: 'test', test3: 'test3' });
+    jest.spyOn(source1, 'build');
+    const config = conman(options);
+    await config.addSource(source1).build();
+    expect(options.logger.info).toHaveBeenCalled();
+    expect(jsonfile.writeFile).toHaveBeenCalledTimes(0);
+    expect(jsonfile.readFile).toHaveBeenCalledTimes(0);
+    expect(source1.build).toHaveBeenCalledTimes(1);
+  });
+
+
   it('should use the file if is NOT expired', async () => {
     const source1 = source({ test: 'test', test3: 'test3' });
     jsonfile.readFile.mockResolvedValueOnce({

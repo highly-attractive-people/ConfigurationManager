@@ -26,14 +26,19 @@ const defaultOptions = {
  * @private
  * @param  {boolean} isEnabled Should log?
  * @param  {object} logger Object that atleast a log and error function
- * @param  logger.log Logs info
- * @param logger.error Logs error
+ * @param  {function} logger.log Logs info
+ * @param  {function} logger.error Logs error
  * @return  {function(string, *)} Function that logs if enabled with the set logger
  */
 function _log(isEnabled, logger) {
+  const fixedLogger = logger;
+  if (!logger.log && logger.info) {
+    fixedLogger.log = logger.info;
+  }
+
   return function inner(type, ...args) {
     if (isEnabled) {
-      logger[type](...args);
+      fixedLogger[type](...args);
     }
   };
 }
