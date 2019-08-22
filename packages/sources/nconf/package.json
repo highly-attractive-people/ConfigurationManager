@@ -1,6 +1,6 @@
 {
   "name": "@highly-attractive-people/conman-nconf-source",
-  "version": "0.0.13",
+  "version": "1.0.0",
   "description": "nconf for conman configuration manager",
   "main": "src/index.js",
   "scripts": {
