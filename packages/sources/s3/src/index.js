@@ -4,7 +4,21 @@ const { mergeAll } = require('ramda');
 const type = 's3';
 let s3;
 
-function getAllFiles(params) {
+function _log(isEnabled, logger) {
+  const fixedLogger = logger;
+  if (!logger.log && logger.info) {
+    fixedLogger.log = logger.info;
+  }
+
+  return function inner(logType, ...args) {
+    if (isEnabled) {
+      fixedLogger[logType](...args);
+    }
+  };
+}
+const defaultLogger = console;
+
+function getAllFiles(params, logger) {
   return s3
     .listObjectsV2(params)
     .promise()
@@ -13,16 +27,19 @@ function getAllFiles(params) {
       return Contents.filter(file => file && file.Key).map(file => file.Key);
     })
     .then(Keys => {
-      const promises = Keys.map(Key => getFile({ ...params, Key }));
+      const promises = Keys.map(Key => getFile({ ...params, Key }, logger));
       return Promise.all(promises).then(mergeAll);
     });
 }
-function getFile(params) {
+function getFile(params, logger) {
   return s3
     .getObject(params)
     .promise()
     .then(file => {
       return JSON.parse(file.Body.toString());
+    })
+    .catch(error => {
+      logger('error', `Error Parsing file ${params.Key}`, error);
     });
 }
 
@@ -35,12 +52,12 @@ function source(userOptions, awsParams = {}) {
     throw new Error('Calling s3 source with null or undefined Bucket');
   }
 
-  function build() {
+  function build(config, logger = _log(false, defaultLogger)) {
     if (!Key) {
-      return getAllFiles({ Bucket });
+      return getAllFiles({ Bucket }, logger);
     }
 
-    return getFile({ Bucket, Key });
+    return getFile({ Bucket, Key }, logger);
   }
 
   return {

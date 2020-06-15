@@ -71,14 +71,14 @@ function _writeToFile(cacheObject, opts) {
       spaces: 2,
       EOL: '\r\n'
     })
-    .then(res => {
+    .then((res) => {
       opts.logger(
         'log',
         `Succesfully wrote conman cache to file ${opts.cacheFileName}`
       );
       return res;
     })
-    .catch(error => {
+    .catch((error) => {
       opts.logger(
         'error',
         `Couldn't write cache to file ${opts.cacheFileName}`,
@@ -106,7 +106,7 @@ function _isExpired(lastModified, ttl) {
 function _readFromFile(opts) {
   return jsonfile
     .readFile(opts.cacheFileName)
-    .then(cache => {
+    .then((cache) => {
       const { lastModified } = cache || {};
       if (_isExpired(lastModified, opts.ttl)) {
         opts.logger(
@@ -117,7 +117,7 @@ function _readFromFile(opts) {
       }
       return null;
     })
-    .catch(err => {
+    .catch((err) => {
       opts.logger(
         'error',
         `Could not read cache config file "${opts.cacheFileName}"`,
@@ -159,14 +159,22 @@ function _get(selector, key, _privateCache) {
  * @private
  * @param  {array} _sources array of sources
  */
-function _buildSources(_sources) {
+function _buildSources(_sources, options) {
   async function buildSource(config, source) {
-    const sourceConfig = await source.build(config);
-    const parseConfig = source.key
-      ? { [source.key]: sourceConfig }
-      : sourceConfig;
+    try {
+      const sourceConfig = await source.build(config, options.logger);
+      const parseConfig = source.key
+        ? { [source.key]: sourceConfig }
+        : sourceConfig;
 
-    return mergeDeepRight(config, parseConfig);
+      return mergeDeepRight(config, parseConfig);
+    } catch (e) {
+      options.logger(
+        'error',
+        `Unable to build source: "${source.key}" at ${new Date().toISOString()} with error ${e}`
+      );
+      return config;
+    }
   }
 
   return serialize(_sources, buildSource, {});
@@ -212,7 +220,7 @@ function conman(userOptions) {
       'log',
       `Build triggered for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
     );
-    const configs = await _buildSources(_sources);
+    const configs = await _buildSources(_sources, options);
     options.logger(
       'log',
       `Build completed for sources: "${sourcesTypes.join()}" at ${new Date().toISOString()}`
@@ -277,7 +285,7 @@ function conman(userOptions) {
    */
   function get(keys) {
     if (Array.isArray(keys)) {
-      return keys.map(key => _get(selector, key, privateCache));
+      return keys.map((key) => _get(selector, key, privateCache));
     }
 
     return _get(selector, keys, privateCache);
