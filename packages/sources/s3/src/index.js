@@ -39,7 +39,7 @@ function getFile(params, logger) {
       return JSON.parse(file.Body.toString());
     })
     .catch(error => {
-      logger('error', `Error Parsing file ${params.Key}`, error);
+      logger('error', `Error Parsing file ${params.Key} with error: ${error}`);
     });
 }
 

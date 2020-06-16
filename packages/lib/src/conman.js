@@ -36,6 +36,10 @@ function _log(isEnabled, logger) {
     fixedLogger.log = logger.info;
   }
 
+  if (!logger.debug && logger.info) {
+    fixedLogger.debug = logger.info;
+  }
+
   return function inner(type, ...args) {
     if (isEnabled) {
       fixedLogger[type](...args);
@@ -81,8 +85,7 @@ function _writeToFile(cacheObject, opts) {
     .catch((error) => {
       opts.logger(
         'error',
-        `Couldn't write cache to file ${opts.cacheFileName}`,
-        error
+        `Couldn't write cache to file ${opts.cacheFileName} with error: ${error}`
       );
     });
 }
@@ -120,8 +123,7 @@ function _readFromFile(opts) {
     .catch((err) => {
       opts.logger(
         'error',
-        `Could not read cache config file "${opts.cacheFileName}"`,
-        err
+        `Could not read cache config file "${opts.cacheFileName}" with error ${err}`,
       );
       return null;
     });
@@ -173,7 +175,10 @@ function _buildSources(_sources, options) {
         'error',
         `Unable to build source: "${source.key}" at ${new Date().toISOString()} with error ${e}`
       );
-      return config;
+      const parseConfig = source.key
+        ? { [source.key]: {} }
+        : {};
+      return mergeDeepRight(config, parseConfig);
     }
   }
 
