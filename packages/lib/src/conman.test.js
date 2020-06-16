@@ -17,6 +17,17 @@ const source = (obj = {}, { key, name } = {}) => {
   };
 };
 
+const Errorsource = (obj, { key, name } = {}) => {
+  return {
+    build() {
+      throw Error('Test Error');
+    },
+    type: 'syncSource',
+    key,
+    name
+  };
+};
+
 const asyncSource = (obj = {}, { key, name } = {}) => {
   return {
     build(config) {
@@ -71,7 +82,7 @@ describe('conman library', () => {
     expect(data).toEqual({ TEST: { test: 'test' } });
   });
 
-  it('should build with one synchronous source and pass the configf', async () => {
+  it('should build with one synchronous source and pass the config', async () => {
     const source1 = source({ test: 'test', extra: 'extra config' });
     const source2 = source({ test: 'usesConfig' });
     const config = conman();
@@ -83,7 +94,19 @@ describe('conman library', () => {
     expect(data).toEqual({ test: 'usesConfig', extra: 'extra config' });
   });
 
-  it('should build with one asynchronous source and pass the configf', async () => {
+  it('should build for all good sources', async () => {
+    const source1 = source({ test: 'goodSource', extra: 'extra config' });
+    const source2 = Errorsource({ test: 'badSource' });
+    const config = conman();
+    const data = await config
+      .addSource(source1)
+      .addSource(source2)
+      .build();
+    config.stop();
+    expect(data).toEqual({ test: 'goodSource', extra: 'extra config' });
+  });
+
+  it('should build with one asynchronous source and pass the config', async () => {
     const source1 = asyncSource({ test: 'test', extra: 'extra config async' });
     const source2 = asyncSource({ test: 'usesConfig' });
     const config = conman();
@@ -268,7 +291,6 @@ describe('conman library', () => {
     expect(jsonfile.readFile).toHaveBeenCalledTimes(0);
     expect(source1.build).toHaveBeenCalledTimes(1);
   });
-
 
   it('should use the file if is NOT expired', async () => {
     const source1 = source({ test: 'test', test3: 'test3' });

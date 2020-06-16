@@ -47,7 +47,7 @@ function nodeSelector(logger) {
     const value = _query(tree, property);
 
     if (value === undefined) {
-      logger('log', `Property "${property}" is not defined.`);
+      logger('debug', `Property "${property}" is not defined.`);
     }
 
     return value;
