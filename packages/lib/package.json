@@ -1,6 +1,6 @@
 {
   "name": "@highly-attractive-people/conman",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Configuration manager that supports ttl and plugabble sources",
   "main": "./src/conman",
   "scripts": {

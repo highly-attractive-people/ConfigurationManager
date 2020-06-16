@@ -1,6 +1,6 @@
 {
   "name": "@highly-attractive-people/conman-s3-source",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "s3 for conman configuration manager",
   "main": "src/index.js",
   "scripts": {
